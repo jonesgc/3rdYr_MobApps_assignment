@@ -1,10 +1,12 @@
 package com.g45_jones.mobileappsassignment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Display;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -38,7 +40,7 @@ public class startScreen extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getData();
+                searchIntent(view);
             }
         });
     }
@@ -65,37 +67,11 @@ public class startScreen extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void getData(){
-        final TextView mTextView = (TextView) findViewById(R.id.textView);
-
-        //Create request queue
-        RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "https://api.companieshouse.gov.uk/search/companies"; //Search URL
-
-        //Request a response from the URL.
-        StringRequest req = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>(){
-                    @Override
-                    public void onResponse(String response){
-                        //Display the response in the textview
-                        mTextView.setText(response);
-                    }
-                }, new Response.ErrorListener(){
-                    @Override
-                    public void onErrorResponse(VolleyError error){
-                        mTextView.setText("nope");
-                    }
-                })
-        {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError{
-                HashMap headers = new HashMap();
-                headers.put("Authorization", "rCg4O9MO8Pv8uluvHRknYxcwWnXSnC3d2ST5wYbD");
-                return headers;
-            }
-        };
-
-        queue.add(req);
+    public void searchIntent(View view){
+        Intent intent = new Intent(this, searchScreen.class);
+        startActivity(intent);
     }
+
+
 
 }

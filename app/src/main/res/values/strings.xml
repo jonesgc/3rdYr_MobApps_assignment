@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">MobileAppsAssignment</string>
     <string name="action_settings">Settings</string>
-    <string name="test">Test</string>
+    <string name="instructions">Start a new search or load a saved diagram.</string>
+    <string name="loadSavedBtn">load</string>
+    <string name="sendQueryBtn">Search</string>
 </resources>
