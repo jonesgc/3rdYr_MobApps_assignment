@@ -42,38 +42,74 @@ public class searchScreen extends AppCompatActivity {
     The user input is taken from the search widget (STRING) and sent to the api.
     Results are displayed below.
     */
-    public void getData(View view){
+    public void getData(View view) {
         //Get the query data from the input.
-        final TextInputEditText input = (TextInputEditText)findViewById(R.id.input);
-        final TextView mTextView = (TextView)findViewById(R.id.textView3);
+        final TextInputEditText input = (TextInputEditText) findViewById(R.id.input);
+        final TextView mTextView = (TextView) findViewById(R.id.textView3);
         //Create request queue
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "https://api.companieshouse.gov.uk/search/companies?q="+"L"; //Search URL
+        String url = "https://api.companieshouse.gov.uk/search/companies?q=" + "L"; //Search URL
 
         //Request a response from the URL.
         StringRequest req = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>(){
+                new Response.Listener<String>() {
                     @Override
-                    public void onResponse(String response){
+                    public void onResponse(String response) {
                         //Display the response in the textview
-                        try{
+                        try {
                             /*Convert response into a string - this should be temporary!*/
                             JSONObject res = new JSONObject(response);
                             String test = res.getString("kind");
                             mTextView.setText(test);
-                        }catch(JSONException e)
-                        {
+                        } catch (JSONException e) {
                             e.printStackTrace();
                         }
 
                     }
-                }, new Response.ErrorListener(){
+                }, new Response.ErrorListener() {
             @Override
-            public void onErrorResponse(VolleyError error){
+            public void onErrorResponse(VolleyError error) {
                 mTextView.setText("nope");
             }
-        })
-        {
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap headers = new HashMap();
+                headers.put("Authorization", "rCg4O9MO8Pv8uluvHRknYxcwWnXSnC3d2ST5wYbD");
+                return headers;
+            }
+        };
+
+        queue.add(req);
+    }
+
+    public void test1(View view) {
+        //Get the query data from the input.
+        final TextInputEditText input = (TextInputEditText) findViewById(R.id.input);
+        final TextView mTextView = (TextView) findViewById(R.id.textView3);
+        //Create request queue
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url = "https://api.companieshouse.gov.uk/search/companies?q=" + "L"; //Search URL
+
+        //Request a response from the URL.
+        JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        //Display the response in the textview
+                        try {
+                            String test = response.getString("kind");
+                            mTextView.setText(test);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                mTextView.setText("nope");
+            }
+        }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap headers = new HashMap();
