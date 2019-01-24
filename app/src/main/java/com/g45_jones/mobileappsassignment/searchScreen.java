@@ -1,11 +1,15 @@
 package com.g45_jones.mobileappsassignment;
 
+import android.app.SearchManager;
+import android.content.Intent;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.system.ErrnoException;
+import android.util.Log;
 import android.view.View;
 import android.widget.RadioButton;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.android.volley.AuthFailureError;
@@ -30,6 +34,23 @@ public class searchScreen extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_screen);
+
+        SearchView searchView = findViewById(R.id.search);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextChange(String s) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                Log.d("Hello","Sumbmitted");
+                //Intent searchAndResults = new Intent(getApplicationContext(), searchAndResults.class);
+                Intent searchAndResults = new Intent(Intent.ACTION_SEARCH);
+                startActivity(searchAndResults);
+                return false;
+            }
+        });
     }
 
     public void showInput(View view) {
@@ -37,87 +58,4 @@ public class searchScreen extends AppCompatActivity {
         boolean checked = ((RadioButton) view).isChecked();
     }
 
-    /*
-    This function fetches the data from the company house api.
-    The user input is taken from the search widget (STRING) and sent to the api.
-    Results are displayed below.
-    */
-    public void getData(View view) {
-        //Get the query data from the input.
-        final TextInputEditText input = (TextInputEditText) findViewById(R.id.input);
-        final TextView mTextView = (TextView) findViewById(R.id.textView3);
-        //Create request queue
-        RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "https://api.companieshouse.gov.uk/search/companies?q=" + "L"; //Search URL
-
-        //Request a response from the URL.
-        StringRequest req = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        //Display the response in the textview
-                        try {
-                            /*Convert response into a string - this should be temporary!*/
-                            JSONObject res = new JSONObject(response);
-                            String test = res.getString("kind");
-                            mTextView.setText(test);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                mTextView.setText("nope");
-            }
-        }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap headers = new HashMap();
-                headers.put("Authorization", "rCg4O9MO8Pv8uluvHRknYxcwWnXSnC3d2ST5wYbD");
-                return headers;
-            }
-        };
-
-        queue.add(req);
-    }
-
-    public void test1(View view) {
-        //Get the query data from the input.
-        final TextInputEditText input = (TextInputEditText) findViewById(R.id.input);
-        final TextView mTextView = (TextView) findViewById(R.id.textView3);
-        //Create request queue
-        RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "https://api.companieshouse.gov.uk/search/companies?q=" + "L"; //Search URL
-
-        //Request a response from the URL.
-        JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, url, null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        //Display the response in the textview
-                        try {
-                            String test = response.getString("kind");
-                            mTextView.setText(test);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                mTextView.setText("nope");
-            }
-        }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap headers = new HashMap();
-                headers.put("Authorization", "rCg4O9MO8Pv8uluvHRknYxcwWnXSnC3d2ST5wYbD");
-                return headers;
-            }
-        };
-
-        queue.add(req);
-    }
 }
