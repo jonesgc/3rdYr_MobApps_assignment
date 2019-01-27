@@ -26,10 +26,15 @@ public class searchAndResults extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_and_results);
-        Intent intent = getIntent();
-        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            String query = intent.getStringExtra(SearchManager.QUERY);
-            getData(query);
+        Bundle query = getIntent().getExtras();
+        if(query != null)
+        {
+            String searchQuery = query.getString("queryString");
+            if(searchQuery != null)
+            {
+                Log.d("Hello",searchQuery);
+            }
+
         }
         Log.d("Hello","intent");
     }

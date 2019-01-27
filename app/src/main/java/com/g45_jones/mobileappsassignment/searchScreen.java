@@ -35,18 +35,32 @@ public class searchScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_screen);
 
-        SearchView searchView = findViewById(R.id.search);
+        //Create a listenter for when the searchview is submitted, so the behaviour below can be executed.
+        final SearchView searchView = findViewById(R.id.search);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextChange(String s) {
                 return false;
             }
 
+            //When the search view is submitted get the query string and associated search parameters
+            //Back these variables into a bundle and send it to the searchAndResults activity.
             @Override
             public boolean onQueryTextSubmit(String s) {
-                Log.d("Hello","Sumbmitted");
-                //Intent searchAndResults = new Intent(getApplicationContext(), searchAndResults.class);
-                Intent searchAndResults = new Intent(Intent.ACTION_SEARCH);
+                Log.d("Hello", "Sumbmitted");
+                Intent searchAndResults = new Intent(getApplicationContext(),
+                        searchAndResults.class);
+
+
+                Bundle searchQuery = new Bundle();
+                //Get the query string from the searchview
+                String queryString = searchView.getQuery().toString();
+                searchQuery.putString("queryString", queryString);
+
+                //Get the radio button parameters
+
+                searchAndResults.putExtras(searchQuery);
+                //Intent searchAndResults = new Intent(Intent.ACTION_SEARCH);
                 startActivity(searchAndResults);
                 return false;
             }
