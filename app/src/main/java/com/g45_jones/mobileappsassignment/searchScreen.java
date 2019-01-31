@@ -9,6 +9,7 @@ import android.system.ErrnoException;
 import android.util.Log;
 import android.view.View;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.SearchView;
 import android.widget.TextView;
 
@@ -35,6 +36,9 @@ public class searchScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_screen);
 
+        //The radio group is used to detemine what category of search the user wishes
+        final RadioGroup rGroup = findViewById(R.id.radioGroup);
+
         //Create a listenter for when the searchview is submitted, so the behaviour below can be executed.
         final SearchView searchView = findViewById(R.id.search);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -58,6 +62,23 @@ public class searchScreen extends AppCompatActivity {
                 searchQuery.putString("queryString", queryString);
 
                 //Get the radio button parameters
+                int radioCheckedId = rGroup.getCheckedRadioButtonId();
+                String searchCategory = "";
+                switch (radioCheckedId) {
+                    //2131230857 = companies
+                    case 2131230857:
+                        searchCategory = "companies";
+                        break;
+                    //2131230858 = officers
+                    case 2131230858:
+                        searchCategory = "officers";
+                        break;
+                    default:
+                        searchCategory = "search";
+                        break;
+                }
+                Log.d("Hello", searchCategory);
+                //searchQuery.putString("category", searchCategory);
 
                 searchAndResults.putExtras(searchQuery);
                 //Intent searchAndResults = new Intent(Intent.ACTION_SEARCH);
@@ -67,9 +88,5 @@ public class searchScreen extends AppCompatActivity {
         });
     }
 
-    public void showInput(View view) {
-        //Get the value of the checked button.
-        boolean checked = ((RadioButton) view).isChecked();
-    }
 
 }
