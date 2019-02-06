@@ -1,6 +1,7 @@
 package com.g45_jones.mobileappsassignment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -46,6 +47,9 @@ public class recyclerViewAdapter extends RecyclerView.Adapter<recyclerViewAdapte
             @Override
             public void onClick(View v) {
                 Log.d("Hello", "onClick: clicked on" + companyTitles);
+                Intent drawAndDisplay = new Intent(v.getContext(), drawAndDisplay.class);
+
+                v.getContext().startActivity(drawAndDisplay);
             }
         });
     }
@@ -67,4 +71,5 @@ public class recyclerViewAdapter extends RecyclerView.Adapter<recyclerViewAdapte
             parent_layout = itemView.findViewById(R.id.parent_layout);
         }
     }
+
 }
