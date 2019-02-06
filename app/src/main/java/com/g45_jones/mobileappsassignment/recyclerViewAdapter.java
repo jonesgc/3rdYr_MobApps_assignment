@@ -39,14 +39,14 @@ public class recyclerViewAdapter extends RecyclerView.Adapter<recyclerViewAdapte
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
+    public void onBindViewHolder(@NonNull final ViewHolder viewHolder, final int i) {
         Log.d("Hello", "onBindViewHolder: called");
         viewHolder.title.setText(companyTitles.get(i));
 
         viewHolder.parent_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("Hello", "onClick: clicked on" + companyTitles);
+                Log.d("Hello", "onClick: clicked on" + companyTitles.get(viewHolder.getAdapterPosition()));
                 Intent drawAndDisplay = new Intent(v.getContext(), drawAndDisplay.class);
 
                 v.getContext().startActivity(drawAndDisplay);

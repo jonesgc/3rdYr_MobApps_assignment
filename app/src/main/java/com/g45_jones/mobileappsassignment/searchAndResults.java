@@ -116,6 +116,7 @@ public class searchAndResults extends AppCompatActivity {
 
     }
 
+    //Inputs the company names intro the array so they can be displayed in the recycler view
     private void addTitle(String string)
     {
         Log.d("Hello","Added" + string + "to titles");
