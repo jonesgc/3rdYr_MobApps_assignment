@@ -18,8 +18,16 @@ public class drawAndDisplay extends AppCompatActivity {
         setContentView(R.layout.activity_draw_and_display);
         RelativeLayout relativeLayout1 = findViewById(R.id.relativeLayoutDrawAndDisplay);
 
+        ImageView node1 = new ImageView(this);
+        node1.setBackgroundResource(R.drawable.ic_android_black_24dp);
+        relativeLayout1.addView(node1);
+
         drawNodeView = new DrawNodeView(this);
         drawNodeView.setBackgroundColor(Color.CYAN);
         setContentView(drawNodeView);
+
+
+
+
     }
 }

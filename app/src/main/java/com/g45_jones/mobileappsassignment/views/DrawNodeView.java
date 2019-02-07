@@ -1,11 +1,14 @@
 package com.g45_jones.mobileappsassignment.views;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.view.View;
+
+import com.g45_jones.mobileappsassignment.R;
 
 
 public class DrawNodeView extends View{
@@ -37,4 +40,5 @@ public class DrawNodeView extends View{
         canvas.drawLine(0, 0, 500, 500, paint);
         canvas.drawLine(20, 0, 0, 20, paint);
     }
+
 }
