@@ -14,7 +14,10 @@ import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 
 import com.g45_jones.mobileappsassignment.R;
+import com.g45_jones.mobileappsassignment.circNode;
 
+import java.util.ArrayList;
+import java.util.Vector;
 
 public class DrawNodeView extends View{
 
@@ -34,6 +37,7 @@ public class DrawNodeView extends View{
     private float node2X;
     private float node2Y;
     Paint paint2;
+    private ArrayList<circNode> nodeList = new ArrayList<circNode>();
 
     //Node specific constants
     private final float nodeRad = 50;
@@ -56,6 +60,7 @@ public class DrawNodeView extends View{
         activeSelection = 0;
         rad = nodeRad;
         node2 = nodeRad;
+        nodeList.add(new circNode(nodeRad, (float) 608.0, (float) 1311, "Company"));
     }
 
     public DrawNodeView(Context context) {
@@ -87,7 +92,7 @@ public class DrawNodeView extends View{
         canvas.drawLine(500, 500, 200, 200, paint1);
         canvas.drawCircle(node2X, node2Y, node2, paint2);
         canvas.drawCircle(node1X, node1Y, rad, paint1);
-
+        canvas.drawCircle(nodeList.get(0).getX(), nodeList.get(0).getY(), nodeList.get(0).getRadius(), paint2);
     }
 
     @Override
@@ -122,10 +127,10 @@ public class DrawNodeView extends View{
         return super.onTouchEvent(event);
     }
 
+    //Used to check of the touch input is triggered inside a node.
     public boolean checkBounds(float tx, float ty){
 
         //Loop through nodes checking if event was in that area.
-
 
         if((tx - node1X) * (tx - node1X) +
                 (ty - node1Y) * (ty - node1Y) <= rad * rad){
