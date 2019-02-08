@@ -1,5 +1,7 @@
 package com.g45_jones.mobileappsassignment.listeners;
 
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.support.v4.view.MotionEventCompat;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -26,9 +28,14 @@ public class customTouchListener extends GestureDetector.SimpleOnGestureListener
         float eY = event.getY(eIndex);
         Log.d("Hello","X:Y = " + eX + " : " + eY);
 
+        Paint pRed = new Paint(Paint.ANTI_ALIAS_FLAG);
+        pRed.setColor(Color.RED);
+        pRed.setStyle(Paint.Style.FILL_AND_STROKE);
+
         for (int i = 0; i < nodeList.size(); i++){
             if(checkBounds(eX,eY, nodeList.get(i).getX(), nodeList.get(i).getY())){
                 Log.d("Hello", "onLongPress of " + nodeList.get(i).getTitle());
+                nodeList.get(i).setColour(pRed);
             }
         }
     }

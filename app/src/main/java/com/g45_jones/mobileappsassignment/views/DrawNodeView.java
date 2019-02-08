@@ -64,9 +64,9 @@ public class DrawNodeView extends View{
         pRed.setColor(Color.RED);
         pRed.setStyle(Paint.Style.FILL_AND_STROKE);
 
-        nodeList.add(new circNode(nodeRad, (float) 608.0, (float) 1311, "Test1"));
-        nodeList.add(new circNode(nodeRad, (float) 500.0, (float) 400.0, "Test2"));
-        nodeList.add(new circNode(nodeRad, (float) 200.0, (float) 1000.0, "test3"));
+        nodeList.add(new circNode(nodeRad, (float) 608.0, (float) 1311, "Test1", pGreen));
+        nodeList.add(new circNode(nodeRad, (float) 500.0, (float) 400.0, "Test2", pGreen));
+        nodeList.add(new circNode(nodeRad, (float) 200.0, (float) 1000.0, "test3", pGreen));
     }
 
     public DrawNodeView(Context context) {
@@ -88,8 +88,7 @@ public class DrawNodeView extends View{
     @Override
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-
-
+        invalidate();
         //Draw lines, connecting nodes showing "relationships"
         /*canvas.drawLine(nodeList.get(1).getX(),
                 nodeList.get(1).getY(),
@@ -106,7 +105,7 @@ public class DrawNodeView extends View{
             canvas.drawCircle(nodeList.get(i).getX(),
                     nodeList.get(i).getY(),
                     nodeList.get(i).getRadius(),
-                    pGreen);
+                    nodeList.get(i).getColour());
         }
 
     }
