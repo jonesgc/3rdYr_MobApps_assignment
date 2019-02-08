@@ -3,11 +3,14 @@ package com.g45_jones.mobileappsassignment.views;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.support.v4.view.GestureDetectorCompat;
 import android.util.AttributeSet;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.Log;
+import android.view.DragEvent;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
@@ -15,7 +18,7 @@ import android.widget.ImageView;
 
 import com.g45_jones.mobileappsassignment.R;
 import com.g45_jones.mobileappsassignment.circNode;
-
+import com.g45_jones.mobileappsassignment.listeners.customTouchListener;
 import java.util.ArrayList;
 import java.util.Vector;
 
@@ -23,8 +26,6 @@ public class DrawNodeView extends View{
 
     private float width;
     private float height;
-
-
 
     //Node arrays: the data "within", radius
     private float rad;
@@ -44,7 +45,13 @@ public class DrawNodeView extends View{
     private static final int ANIMATION_DURATION = 4000;
     private static final long ANIMATION_DELAY = 1000;
 
+    customTouchListener touchListener;
+    GestureDetector gestureDetector;
+
     private void init(){
+        touchListener = new customTouchListener(nodeList);
+        gestureDetector = new GestureDetector(getContext(), touchListener);
+
         pBlack = new Paint(Paint.ANTI_ALIAS_FLAG);
         pBlack.setColor(Color.BLACK);
         pBlack.setStyle(Paint.Style.FILL_AND_STROKE);
@@ -114,6 +121,7 @@ public class DrawNodeView extends View{
 
     @Override
     public boolean onTouchEvent(MotionEvent event){
+        /*
         if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
             tX = event.getX();
             Log.d("Hello","X pos =" + tX);
@@ -126,9 +134,8 @@ public class DrawNodeView extends View{
                     Log.d("Hello", "onTouchEvent: bounds");
                 }
             }
-
-
-        }
+        }*/
+        gestureDetector.onTouchEvent(event);
         return super.onTouchEvent(event);
     }
 
@@ -140,7 +147,6 @@ public class DrawNodeView extends View{
         else{
             return false;
         }
-
     }
 
     public void connections(Canvas canvas, int node1, int node2){
@@ -152,3 +158,4 @@ public class DrawNodeView extends View{
                 pBlack);
     }
 }
+
