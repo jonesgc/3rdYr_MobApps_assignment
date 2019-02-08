@@ -21,22 +21,16 @@ import java.util.Vector;
 
 public class DrawNodeView extends View{
 
-    private static int selection_count = 4;
     private float width;
     private float height;
 
-    private int activeSelection;
-    Paint paint1;
-    private final float [] tempResult = new float[2];
+
 
     //Node arrays: the data "within", radius
     private float rad;
-    private float node1X;
-    private float node1Y;
-    private float node2;
-    private float node2X;
-    private float node2Y;
-    Paint paint2;
+    Paint pBlack;
+    Paint pGreen;
+    Paint pRed;
     private ArrayList<circNode> nodeList = new ArrayList<circNode>();
 
     //Node specific constants
@@ -51,16 +45,21 @@ public class DrawNodeView extends View{
     private static final long ANIMATION_DELAY = 1000;
 
     private void init(){
-        paint1 = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paint1.setColor(Color.BLACK);
-        paint1.setStyle(Paint.Style.FILL_AND_STROKE);
-        paint2 = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paint2.setColor(Color.GREEN);
-        paint2.setStyle(Paint.Style.FILL_AND_STROKE);
-        activeSelection = 0;
-        rad = nodeRad;
-        node2 = nodeRad;
-        nodeList.add(new circNode(nodeRad, (float) 608.0, (float) 1311, "Company"));
+        pBlack = new Paint(Paint.ANTI_ALIAS_FLAG);
+        pBlack.setColor(Color.BLACK);
+        pBlack.setStyle(Paint.Style.FILL_AND_STROKE);
+
+        pGreen = new Paint(Paint.ANTI_ALIAS_FLAG);
+        pGreen.setColor(Color.GREEN);
+        pGreen.setStyle(Paint.Style.FILL_AND_STROKE);
+
+        pRed = new Paint(Paint.ANTI_ALIAS_FLAG);
+        pRed.setColor(Color.RED);
+        pRed.setStyle(Paint.Style.FILL_AND_STROKE);
+
+        nodeList.add(new circNode(nodeRad, (float) 608.0, (float) 1311, "Test1"));
+        nodeList.add(new circNode(nodeRad, (float) 500.0, (float) 400.0, "Test2"));
+        nodeList.add(new circNode(nodeRad, (float) 200.0, (float) 1000.0, "test3"));
     }
 
     public DrawNodeView(Context context) {
@@ -82,17 +81,27 @@ public class DrawNodeView extends View{
     @Override
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        node1X = 500;
-        node1Y = 500;
 
-        node2X = 200;
-        node2Y = 200;
 
-        //draw a node
-        canvas.drawLine(500, 500, 200, 200, paint1);
-        canvas.drawCircle(node2X, node2Y, node2, paint2);
-        canvas.drawCircle(node1X, node1Y, rad, paint1);
-        canvas.drawCircle(nodeList.get(0).getX(), nodeList.get(0).getY(), nodeList.get(0).getRadius(), paint2);
+        //Draw lines, connecting nodes showing "relationships"
+        /*canvas.drawLine(nodeList.get(1).getX(),
+                nodeList.get(1).getY(),
+                nodeList.get(0).getX(),
+                nodeList.get(0).getY(),
+                pBlack);*/
+
+        //connect the two nodes.
+        connections(canvas, 0, 1);
+        connections(canvas, 1, 2);
+
+        //Draw nodes
+        for(int i =0; i < nodeList.size(); i++){
+            canvas.drawCircle(nodeList.get(i).getX(),
+                    nodeList.get(i).getY(),
+                    nodeList.get(i).getRadius(),
+                    pGreen);
+        }
+
     }
 
     @Override
@@ -102,14 +111,6 @@ public class DrawNodeView extends View{
         //rad = (float) (Math.min(width, height) / 2*0.8);
     }
 
-    private float[] computeXYForPosition(final int pos, final float radius) {
-        float[] result = tempResult;
-        Double startAngle = Math.PI * (9 / 8d);   // Angles are in radians.
-        Double angle = startAngle + (pos * (Math.PI / 4));
-        result[0] = (float) (radius * Math.cos(angle)) + (width / 2);
-        result[1] = (float) (radius * Math.sin(angle)) + (height / 2);
-        return result;
-    }
 
     @Override
     public boolean onTouchEvent(MotionEvent event){
@@ -119,26 +120,35 @@ public class DrawNodeView extends View{
             tY = event.getY();
             Log.d("Hello", "Y pos =" + tY);
 
-            if(checkBounds(tX,tY)){
-                Log.d("Hello", "onTouchEvent: bounds");
+            //Iterate through the nodeList checking if the touch event hit any of the nodes
+            for (int i = 0; i < nodeList.size(); i++){
+                if(checkBounds(tX,tY, nodeList.get(i).getX(), nodeList.get(i).getY())){
+                    Log.d("Hello", "onTouchEvent: bounds");
+                }
             }
+
 
         }
         return super.onTouchEvent(event);
     }
 
     //Used to check of the touch input is triggered inside a node.
-    public boolean checkBounds(float tx, float ty){
-
-        //Loop through nodes checking if event was in that area.
-
-        if((tx - node1X) * (tx - node1X) +
-                (ty - node1Y) * (ty - node1Y) <= rad * rad){
+    public boolean checkBounds(float tx, float ty, float nx, float ny){
+        if((tx - nx) * (tx - nx) + (ty - ny) * (ty - ny) <= nodeRad * nodeRad){
             return true;
         }
         else{
             return false;
         }
 
+    }
+
+    public void connections(Canvas canvas, int node1, int node2){
+
+        canvas.drawLine(nodeList.get(node1).getX(),
+                nodeList.get(node1).getY(),
+                nodeList.get(node2).getX(),
+                nodeList.get(node2).getY(),
+                pBlack);
     }
 }
