@@ -67,6 +67,8 @@ public class DrawNodeView extends View{
         nodeList.add(new circNode(nodeRad, (float) 608.0, (float) 1311, "Test1", pGreen));
         nodeList.add(new circNode(nodeRad, (float) 500.0, (float) 400.0, "Test2", pGreen));
         nodeList.add(new circNode(nodeRad, (float) 200.0, (float) 1000.0, "test3", pGreen));
+
+
     }
 
     public DrawNodeView(Context context) {
@@ -134,6 +136,7 @@ public class DrawNodeView extends View{
                 }
             }
         }*/
+        Log.d("Hello", "onTouchEvent:" + event);
         gestureDetector.onTouchEvent(event);
         return super.onTouchEvent(event);
     }
