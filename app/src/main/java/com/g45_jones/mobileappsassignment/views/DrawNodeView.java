@@ -19,10 +19,11 @@ import android.widget.ImageView;
 import com.g45_jones.mobileappsassignment.R;
 import com.g45_jones.mobileappsassignment.circNode;
 import com.g45_jones.mobileappsassignment.listeners.customTouchListener;
+
 import java.util.ArrayList;
 import java.util.Vector;
 
-public class DrawNodeView extends View{
+public class DrawNodeView extends View {
 
     private float width;
     private float height;
@@ -42,13 +43,14 @@ public class DrawNodeView extends View{
     private float tY;
 
     //Animation variables
+    private boolean touchFlag;
     private static final int ANIMATION_DURATION = 4000;
     private static final long ANIMATION_DELAY = 1000;
 
     customTouchListener touchListener;
     GestureDetector gestureDetector;
 
-    private void init(){
+    private void init() {
         touchListener = new customTouchListener(nodeList);
         gestureDetector = new GestureDetector(getContext(), touchListener);
 
@@ -103,7 +105,7 @@ public class DrawNodeView extends View{
         connections(canvas, 1, 2);
 
         //Draw nodes
-        for(int i =0; i < nodeList.size(); i++){
+        for (int i = 0; i < nodeList.size(); i++) {
             canvas.drawCircle(nodeList.get(i).getX(),
                     nodeList.get(i).getY(),
                     nodeList.get(i).getRadius(),
@@ -113,7 +115,7 @@ public class DrawNodeView extends View{
     }
 
     @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh){
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         width = w;
         height = h;
         //rad = (float) (Math.min(width, height) / 2*0.8);
@@ -121,37 +123,48 @@ public class DrawNodeView extends View{
 
 
     @Override
-    public boolean onTouchEvent(MotionEvent event){
-        /*
-        if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
-            tX = event.getX();
-            Log.d("Hello","X pos =" + tX);
-            tY = event.getY();
-            Log.d("Hello", "Y pos =" + tY);
+    public boolean onTouchEvent(MotionEvent event) {
 
-            //Iterate through the nodeList checking if the touch event hit any of the nodes
-            for (int i = 0; i < nodeList.size(); i++){
-                if(checkBounds(tX,tY, nodeList.get(i).getX(), nodeList.get(i).getY())){
-                    Log.d("Hello", "onTouchEvent: bounds");
+        /*switch (event.getActionMasked() & MotionEvent.ACTION_MASK) {
+            case MotionEvent.ACTION_UP:
+                if (touchFlag) {
+                    tX = event.getX();
+                    Log.d("Hello", "X pos =" + tX);
+                    tY = event.getY();
+                    Log.d("Hello", "Y pos =" + tY);
+                    touchFlag = true;
+                    //Iterate through the nodeList checking if the touch event hit any of the nodes
+                    for (int i = 0; i < nodeList.size(); i++) {
+                        if (checkBounds(tX, tY, nodeList.get(i).getX(), nodeList.get(i).getY())) {
+                            Log.d("Hello", "onTouchEvent: bounds");
+                            nodeList.get(i).setColour(pBlack);
+                        }
+                    }
                 }
-            }
-        }*/
-        Log.d("Hello", "onTouchEvent:" + event);
+                break;
+            case MotionEvent.ACTION_DOWN:
+                Log.d("Hello", "ACtion down");
+                touchFlag = true;
+                break;
+
+        }
+        return true;
+        */
+
         gestureDetector.onTouchEvent(event);
         return super.onTouchEvent(event);
     }
 
     //Used to check of the touch input is triggered inside a node.
-    public boolean checkBounds(float tx, float ty, float nx, float ny){
-        if((tx - nx) * (tx - nx) + (ty - ny) * (ty - ny) <= nodeRad * nodeRad){
+    public boolean checkBounds(float tx, float ty, float nx, float ny) {
+        if ((tx - nx) * (tx - nx) + (ty - ny) * (ty - ny) <= nodeRad * nodeRad) {
             return true;
-        }
-        else{
+        } else {
             return false;
         }
     }
 
-    public void connections(Canvas canvas, int node1, int node2){
+    public void connections(Canvas canvas, int node1, int node2) {
 
         canvas.drawLine(nodeList.get(node1).getX(),
                 nodeList.get(node1).getY(),

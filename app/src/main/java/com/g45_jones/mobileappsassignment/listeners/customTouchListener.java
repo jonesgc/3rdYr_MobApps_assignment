@@ -20,8 +20,9 @@ public class customTouchListener extends GestureDetector.SimpleOnGestureListener
     }
 
     @Override
-    public boolean onSingleTapUp(MotionEvent event) {
+    public boolean onSingleTapConfirmed(MotionEvent event) {
         // triggers after onDown only for single tap
+        Log.d("Hello", "single: ");
         return true;
     }
 
@@ -41,10 +42,9 @@ public class customTouchListener extends GestureDetector.SimpleOnGestureListener
             if (checkBounds(eX, eY, nodeList.get(i).getX(), nodeList.get(i).getY())) {
                 Log.d("Hello", "onDoubleTap of " + nodeList.get(i).getTitle());
                 nodeList.get(i).setColour(pBlue);
-                return true;
             }
         }
-        return false;
+        return true;
     }
 
     @Override
@@ -73,6 +73,7 @@ public class customTouchListener extends GestureDetector.SimpleOnGestureListener
     @Override
     public boolean onDown(MotionEvent e) {
         super.onDown(e);
+        Log.d("Hello", "onDown");
         return true;
     }
 
