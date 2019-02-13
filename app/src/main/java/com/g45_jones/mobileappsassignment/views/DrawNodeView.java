@@ -2,6 +2,7 @@ package com.g45_jones.mobileappsassignment.views;
 
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.support.v4.view.GestureDetectorCompat;
 import android.util.AttributeSet;
@@ -9,6 +10,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.Log;
+import android.view.Display;
 import android.view.DragEvent;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -18,25 +20,21 @@ import android.widget.ImageView;
 
 import com.g45_jones.mobileappsassignment.R;
 import com.g45_jones.mobileappsassignment.circNode;
-import com.g45_jones.mobileappsassignment.listeners.customTouchListener;
 
 import java.util.ArrayList;
 
 public class DrawNodeView extends View {
 
-    private float width;
-    private float height;
-
-    //Node arrays: the data "within", radius
-    private float rad;
+    //Node specific constants
+    private final float nodeRad = 50;
     Paint pBlack;
     Paint pGreen;
     Paint pRed;
+    private float width;
+    private float height;
+    //Node arrays: the data "within", radius
+    private float rad;
     private ArrayList<circNode> nodeList = new ArrayList<circNode>();
-
-    //Node specific constants
-    private final float nodeRad = 50;
-
     //Variables to store the x and y position of a touch event
     private float tX;
     private float tY;
@@ -44,34 +42,12 @@ public class DrawNodeView extends View {
     //Animation variables
     private boolean touchFlag;
     private Integer touched;
-    private static final int ANIMATION_DURATION = 4000;
-    private static final long ANIMATION_DELAY = 1000;
-
-    customTouchListener touchListener;
-    GestureDetector gestureDetector;
-
-    private void init() {
-        touchListener = new customTouchListener(nodeList);
-        gestureDetector = new GestureDetector(getContext(), touchListener);
-
-        pBlack = new Paint(Paint.ANTI_ALIAS_FLAG);
-        pBlack.setColor(Color.BLACK);
-        pBlack.setStyle(Paint.Style.FILL_AND_STROKE);
-
-        pGreen = new Paint(Paint.ANTI_ALIAS_FLAG);
-        pGreen.setColor(Color.GREEN);
-        pGreen.setStyle(Paint.Style.FILL_AND_STROKE);
-
-        pRed = new Paint(Paint.ANTI_ALIAS_FLAG);
-        pRed.setColor(Color.RED);
-        pRed.setStyle(Paint.Style.FILL_AND_STROKE);
-
-        nodeList.add(new circNode(nodeRad, (float) 608.0, (float) 1311, "Test1", pGreen));
-        nodeList.add(new circNode(nodeRad, (float) 500.0, (float) 400.0, "Test2", pGreen));
-        nodeList.add(new circNode(nodeRad, (float) 200.0, (float) 1000.0, "test3", pGreen));
-
-
-    }
+    private Display display;
+    private Point displaySize;
+    private float maxX;
+    private float maxY;
+    private float centerX;
+    private float centerY;
 
     public DrawNodeView(Context context) {
         super(context);
@@ -88,17 +64,41 @@ public class DrawNodeView extends View {
         init();
     }
 
+    private void init() {
+
+        //Get the maxium X and Y co-ordiniates, this is important for drawing the node graph
+        /*display = getDisplay();
+        displaySize = new Point();
+        display.getSize(displaySize);
+        maxX = displaySize.x;
+        maxY = displaySize.y;*/
+
+        pBlack = new Paint(Paint.ANTI_ALIAS_FLAG);
+        pBlack.setColor(Color.BLACK);
+        pBlack.setStyle(Paint.Style.FILL_AND_STROKE);
+
+        pGreen = new Paint(Paint.ANTI_ALIAS_FLAG);
+        pGreen.setColor(Color.GREEN);
+        pGreen.setStyle(Paint.Style.FILL_AND_STROKE);
+
+        pRed = new Paint(Paint.ANTI_ALIAS_FLAG);
+        pRed.setColor(Color.RED);
+        pRed.setStyle(Paint.Style.FILL_AND_STROKE);
+
+        //Data is retrieved.
+        //Nodes are created with the company title at the center.
+        nodeList.add(new circNode(nodeRad, (float) 100.0, (float) 200.0, "TITLE", pGreen));
+        nodeList.add(new circNode(nodeRad, (float) 500.0, (float) 300.0, "OFFICER", pGreen));
+        nodeList.add(new circNode(nodeRad, (float) 200.0, (float) 1000.0, "LEAF TITLE", pGreen));
+
+
+    }
+
     //All the nodes and lines are executed within this function
     @Override
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         invalidate();
-        //Draw lines, connecting nodes showing "relationships"
-        /*canvas.drawLine(nodeList.get(1).getX(),
-                nodeList.get(1).getY(),
-                nodeList.get(0).getX(),
-                nodeList.get(0).getY(),
-                pBlack);*/
 
         //connect the two nodes.
         connections(canvas, 0, 1);
@@ -163,7 +163,7 @@ public class DrawNodeView extends View {
             case MotionEvent.ACTION_MOVE:
                 //since the nodelist starts at 0 we need to use an Integer to check if its null or 0
                 if (touched != null) {
-                    Log.d("Hello", "Moving "+ touched);
+                    Log.d("Hello", "Moving " + touched);
                     tX = event.getX();
                     tY = event.getY();
                     nodeList.get(touched).setX(tX);
@@ -175,10 +175,6 @@ public class DrawNodeView extends View {
                 break;
         }
         return true;
-
-
-        /*gestureDetector.onTouchEvent(event);
-        return super.onTouchEvent(event);*/
     }
 
     //Used to check of the touch input is triggered inside a node.
@@ -198,5 +194,6 @@ public class DrawNodeView extends View {
                 nodeList.get(node2).getY(),
                 pBlack);
     }
+
 }
 
