@@ -21,7 +21,6 @@ import com.g45_jones.mobileappsassignment.circNode;
 import com.g45_jones.mobileappsassignment.listeners.customTouchListener;
 
 import java.util.ArrayList;
-import java.util.Vector;
 
 public class DrawNodeView extends View {
 
@@ -44,6 +43,7 @@ public class DrawNodeView extends View {
 
     //Animation variables
     private boolean touchFlag;
+    private Integer touched;
     private static final int ANIMATION_DURATION = 4000;
     private static final long ANIMATION_DELAY = 1000;
 
@@ -125,7 +125,8 @@ public class DrawNodeView extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
-        /*switch (event.getActionMasked() & MotionEvent.ACTION_MASK) {
+        switch (event.getActionMasked() & MotionEvent.ACTION_MASK) {
+            //This event follows an ACTION_DOWN and consittudes a tap.
             case MotionEvent.ACTION_UP:
                 if (touchFlag) {
                     tX = event.getX();
@@ -136,23 +137,48 @@ public class DrawNodeView extends View {
                     //Iterate through the nodeList checking if the touch event hit any of the nodes
                     for (int i = 0; i < nodeList.size(); i++) {
                         if (checkBounds(tX, tY, nodeList.get(i).getX(), nodeList.get(i).getY())) {
-                            Log.d("Hello", "onTouchEvent: bounds");
+                            Log.d("Hello", "onTouchEvent: bounds" + i);
                             nodeList.get(i).setColour(pBlack);
                         }
                     }
+                    Log.d("Hello", "onTouchEvent: UP");
+                    touched = null;
                 }
                 break;
             case MotionEvent.ACTION_DOWN:
                 Log.d("Hello", "ACtion down");
+                //Look if the action was inside a node
+                tX = event.getX();
+                tY = event.getY();
+                //Iterate through the nodeList checking if the touch event hit any of the nodes
+                for (int i = 0; i < nodeList.size(); i++) {
+                    if (checkBounds(tX, tY, nodeList.get(i).getX(), nodeList.get(i).getY())) {
+                        Log.d("Hello", "onTouchEvent: bounds" + i);
+                        nodeList.get(i).setColour(pRed);
+                        touched = i;
+                    }
+                }
                 touchFlag = true;
                 break;
-
+            case MotionEvent.ACTION_MOVE:
+                //since the nodelist starts at 0 we need to use an Integer to check if its null or 0
+                if (touched != null) {
+                    Log.d("Hello", "Moving "+ touched);
+                    tX = event.getX();
+                    tY = event.getY();
+                    nodeList.get(touched).setX(tX);
+                    nodeList.get(touched).setY(tY);
+                }
+                break;
+            case MotionEvent.ACTION_CANCEL:
+                Log.d("Hello", "onTouchEvent: Canceled");
+                break;
         }
         return true;
-        */
 
-        gestureDetector.onTouchEvent(event);
-        return super.onTouchEvent(event);
+
+        /*gestureDetector.onTouchEvent(event);
+        return super.onTouchEvent(event);*/
     }
 
     //Used to check of the touch input is triggered inside a node.

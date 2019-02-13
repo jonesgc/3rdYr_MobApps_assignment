@@ -43,4 +43,12 @@ public class circNode {
     public void setColour(Paint p){
         colour = p;
     }
+
+    public void setX(float eX){
+        x = eX;
+    }
+
+    public void setY(float eY){
+        y = eY;
+    }
 }
