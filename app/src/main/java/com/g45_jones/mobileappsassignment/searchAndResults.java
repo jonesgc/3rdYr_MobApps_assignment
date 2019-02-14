@@ -1,12 +1,9 @@
 package com.g45_jones.mobileappsassignment;
 
-import android.app.SearchManager;
-import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import com.g45_jones.mobileappsassignment.recyclerViewAdapter;
 import android.util.Log;
 
 import com.android.volley.AuthFailureError;
@@ -31,6 +28,7 @@ public class searchAndResults extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_and_results);
+
 
         //Get the contents of the bundle sent from searchScreen
         Bundle query = getIntent().getExtras();
@@ -58,8 +56,9 @@ public class searchAndResults extends AppCompatActivity {
     //
     public void getData(String query) {
         //Create request queue
-        RequestQueue queue = Volley.newRequestQueue(this);
+
         String url = "https://api.companieshouse.gov.uk/search/companies?q=" + query; //Search URL
+
 
         //Request a response from the URL.
         StringRequest req = new StringRequest(Request.Method.GET, url,
@@ -99,7 +98,11 @@ public class searchAndResults extends AppCompatActivity {
                 return headers;
             }
         };
-        queue.add(req);
+
+        RequestQueue queue = requestQueueSingleton.
+                getInstance(this.getApplicationContext()).getRequestQueue();
+
+        requestQueueSingleton.getInstance(this).addToRequestQueue(req);
     }
 
     //Creation of recycler view was adapted from the following video tutorial
