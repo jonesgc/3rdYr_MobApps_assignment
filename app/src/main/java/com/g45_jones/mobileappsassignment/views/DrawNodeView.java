@@ -15,6 +15,7 @@ import android.view.DragEvent;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 
@@ -42,12 +43,8 @@ public class DrawNodeView extends View {
     //Animation variables
     private boolean touchFlag;
     private Integer touched;
-    private Display display;
-    private Point displaySize;
-    private float maxX;
-    private float maxY;
-    private float centerX;
-    private float centerY;
+    private float threshold;
+
 
     public DrawNodeView(Context context) {
         super(context);
@@ -67,11 +64,6 @@ public class DrawNodeView extends View {
     private void init() {
 
         //Get the maxium X and Y co-ordiniates, this is important for drawing the node graph
-        /*display = getDisplay();
-        displaySize = new Point();
-        display.getSize(displaySize);
-        maxX = displaySize.x;
-        maxY = displaySize.y;*/
 
         pBlack = new Paint(Paint.ANTI_ALIAS_FLAG);
         pBlack.setColor(Color.BLACK);
@@ -84,6 +76,7 @@ public class DrawNodeView extends View {
         pRed = new Paint(Paint.ANTI_ALIAS_FLAG);
         pRed.setColor(Color.RED);
         pRed.setStyle(Paint.Style.FILL_AND_STROKE);
+
 
         //Data is retrieved.
         //Nodes are created with the company title at the center.
@@ -143,6 +136,7 @@ public class DrawNodeView extends View {
                     }
                     Log.d("Hello", "onTouchEvent: UP");
                     touched = null;
+                    threshold=0;
                 }
                 break;
             case MotionEvent.ACTION_DOWN:
@@ -162,12 +156,15 @@ public class DrawNodeView extends View {
                 break;
             case MotionEvent.ACTION_MOVE:
                 //since the nodelist starts at 0 we need to use an Integer to check if its null or 0
-                if (touched != null) {
+                Log.d("Hello", "Movement event +1 threshold");
+                threshold+=1;
+                if (touched != null && threshold >= 5) {
                     Log.d("Hello", "Moving " + touched);
                     tX = event.getX();
                     tY = event.getY();
                     nodeList.get(touched).setX(tX);
                     nodeList.get(touched).setY(tY);
+                    nodeList.get(touched).setColour(pRed);
                 }
                 break;
             case MotionEvent.ACTION_CANCEL:
