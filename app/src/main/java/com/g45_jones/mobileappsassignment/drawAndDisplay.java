@@ -43,7 +43,4 @@ public class drawAndDisplay extends AppCompatActivity {
 
     }
 
-    public void getRelated(String query) {
-
-    }
 }

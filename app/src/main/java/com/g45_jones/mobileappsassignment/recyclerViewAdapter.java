@@ -47,8 +47,10 @@ public class recyclerViewAdapter extends RecyclerView.Adapter<recyclerViewAdapte
             @Override
             public void onClick(View v) {
                 Log.d("Hello", "onClick: clicked on" + companyTitles.get(viewHolder.getAdapterPosition()));
-                Intent drawAndDisplay = new Intent(v.getContext(), drawAndDisplay.class);
 
+                //Get the related data for the title selected, then start the intent for the node diagram.
+
+                Intent drawAndDisplay = new Intent(v.getContext(), drawAndDisplay.class);
                 v.getContext().startActivity(drawAndDisplay);
             }
         });

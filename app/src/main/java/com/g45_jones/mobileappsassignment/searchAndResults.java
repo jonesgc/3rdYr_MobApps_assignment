@@ -38,7 +38,7 @@ public class searchAndResults extends AppCompatActivity {
             if(searchQuery != null)
             {
                 Log.d("Hello",searchQuery);
-                getData(searchQuery);
+                getTitles(searchQuery);
             }
             else
             {
@@ -54,11 +54,9 @@ public class searchAndResults extends AppCompatActivity {
     Results are displayed below.
     */
     //
-    public void getData(String query) {
-        //Create request queue
+    public void getTitles(String query) {
 
         String url = "https://api.companieshouse.gov.uk/search/companies?q=" + query; //Search URL
-
 
         //Request a response from the URL.
         StringRequest req = new StringRequest(Request.Method.GET, url,
@@ -80,6 +78,43 @@ public class searchAndResults extends AppCompatActivity {
                                 addTitle(companyName);
                             }
                             initRecyclerView();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("Hello","Error");
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap headers = new HashMap();
+                headers.put("Authorization", "rCg4O9MO8Pv8uluvHRknYxcwWnXSnC3d2ST5wYbD");
+                return headers;
+            }
+        };
+
+        RequestQueue queue = requestQueueSingleton.
+                getInstance(this.getApplicationContext()).getRequestQueue();
+
+        requestQueueSingleton.getInstance(this).addToRequestQueue(req);
+    }
+
+    private void getRelatedData(String title){
+        String url = "";
+
+        //Request a response from the URL.
+        StringRequest req = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        //Display the response in the textview
+                        try {
+                            JSONObject res = new JSONObject(response);
+                            
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

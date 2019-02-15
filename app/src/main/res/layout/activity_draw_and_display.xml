@@ -7,5 +7,5 @@
     <com.g45_jones.mobileappsassignment.views.DrawNodeView
         android:id="@+id/nodeView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
 </RelativeLayout>
