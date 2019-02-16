@@ -1,5 +1,6 @@
 package com.g45_jones.mobileappsassignment;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,6 +15,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -23,7 +25,7 @@ import java.util.Map;
 
 public class searchAndResults extends AppCompatActivity {
     private ArrayList<String> companyTitles = new ArrayList<>();
-
+    private ArrayList<String> companyNumbers = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,8 +76,11 @@ public class searchAndResults extends AppCompatActivity {
                                 String companyName = res.getJSONArray("items")
                                         .getJSONObject(i)
                                         .getString("title");
+                                String coNumber = res.getJSONArray("items")
+                                        .getJSONObject(i)
+                                        .getString("company_number");
                                 Log.d("Hello", companyName);
-                                addTitle(companyName);
+                                addIdentification(companyName, coNumber);
                             }
                             initRecyclerView();
                         } catch (JSONException e) {
@@ -103,18 +108,22 @@ public class searchAndResults extends AppCompatActivity {
         requestQueueSingleton.getInstance(this).addToRequestQueue(req);
     }
 
-    private void getRelatedData(String title){
-        String url = "";
-
-        //Request a response from the URL.
-        StringRequest req = new StringRequest(Request.Method.GET, url,
+    public void getRelatedData(String companyNumber){
+        String officers = "https://api.companieshouse.gov.uk/company/"+ companyNumber +"/officers";
+        Log.d("Hello",officers);
+        //Get the officers for the input company
+        StringRequest req = new StringRequest(Request.Method.GET, officers,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         //Display the response in the textview
                         try {
                             JSONObject res = new JSONObject(response);
-                            
+                            Log.d("Hello", "Query sent");
+                            Log.d("Hello", res.toString());
+                            JSONArray items = res.getJSONArray("items");
+                            Log.d("Hello", "Items" + items);
+                            packageAndIntent();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -148,16 +157,25 @@ public class searchAndResults extends AppCompatActivity {
         Log.d("Hello", "initRecyclerView");
         RecyclerView recycler =  findViewById(R.id.recycler);
         recycler.setHasFixedSize(true);
-        recyclerViewAdapter adapter = new recyclerViewAdapter(companyTitles,this);
+        recyclerViewAdapter adapter = new recyclerViewAdapter(companyNumbers,companyTitles,this);
         recycler.setAdapter(adapter);
         recycler.setLayoutManager(new LinearLayoutManager(this));
 
     }
 
     //Inputs the company names intro the array so they can be displayed in the recycler view
-    private void addTitle(String string)
+    private void addIdentification(String string, String coNumb)
     {
         Log.d("Hello","Added" + string + "to titles");
         companyTitles.add(string);
+        companyNumbers.add(coNumb);
+    }
+
+    //Packs the relevant data to the user input select then send it to the drawAndDisplay activity
+    private void packageAndIntent(){
+        Log.d("Hello", "packageAndIntent: starting new activity");
+        //Need to collect the data to be used in the creation of the node diagram
+        Intent drawAndDisplay = new Intent(this, drawAndDisplay.class);
+        this.startActivity(drawAndDisplay);
     }
 }

@@ -23,10 +23,12 @@ public class recyclerViewAdapter extends RecyclerView.Adapter<recyclerViewAdapte
 
 
     private ArrayList<String> companyTitles = new ArrayList<>();
+    private ArrayList<String> companyNumbers = new ArrayList<>();
     private Context context;
 
-    public recyclerViewAdapter(ArrayList<String> companyTitles, Context context) {
+    public recyclerViewAdapter(ArrayList<String> companyNumbers,ArrayList<String> companyTitles, Context context) {
         this.companyTitles = companyTitles;
+        this.companyNumbers = companyNumbers;
         this.context = context;
     }
 
@@ -48,10 +50,14 @@ public class recyclerViewAdapter extends RecyclerView.Adapter<recyclerViewAdapte
             public void onClick(View v) {
                 Log.d("Hello", "onClick: clicked on" + companyTitles.get(viewHolder.getAdapterPosition()));
 
+                String title = companyTitles.get(viewHolder.getAdapterPosition());
+                String companyNumber = companyNumbers.get(viewHolder.getAdapterPosition());
                 //Get the related data for the title selected, then start the intent for the node diagram.
+                if(context instanceof searchAndResults){
+                    Log.d("Hello", "onClick: Calling related data with "+ companyNumber);
+                    ((searchAndResults)context).getRelatedData(companyNumber);
+                }
 
-                Intent drawAndDisplay = new Intent(v.getContext(), drawAndDisplay.class);
-                v.getContext().startActivity(drawAndDisplay);
             }
         });
     }
