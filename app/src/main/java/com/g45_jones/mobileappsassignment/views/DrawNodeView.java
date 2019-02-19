@@ -1,6 +1,7 @@
 package com.g45_jones.mobileappsassignment.views;
 
 import android.animation.ObjectAnimator;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
@@ -39,6 +40,7 @@ public class DrawNodeView extends View {
     //Variables to store the x and y position of a touch event
     private float tX;
     private float tY;
+    private ArrayList<String> oName;
 
     //Animation variables
     private boolean touchFlag;
@@ -49,6 +51,10 @@ public class DrawNodeView extends View {
     public DrawNodeView(Context context) {
         super(context);
         init();
+        Log.d("Hello", "oname size" + oName.size());
+        for (int i = 0; i < oName.size(); i++){
+            Log.d("Hello", "Officer name = " + oName.get(i));
+        }
     }
 
     public DrawNodeView(Context context, AttributeSet attrs) {
@@ -190,6 +196,10 @@ public class DrawNodeView extends View {
                 nodeList.get(node2).getX(),
                 nodeList.get(node2).getY(),
                 pBlack);
+    }
+
+    public void setOname(ArrayList<String> o){
+        oName = new ArrayList<>(o);
     }
 
 }

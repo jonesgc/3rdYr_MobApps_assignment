@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -21,6 +22,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,11 +31,15 @@ public class drawAndDisplay extends AppCompatActivity {
 
     DrawNodeView drawNodeView;
     private ViewGroup rootLayout;
+
+    private ArrayList<String> oName = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_draw_and_display);
         this.rootLayout = findViewById(R.id.relativeLayoutDrawAndDisplay);
+        drawNodeView = findViewById(R.id.nodeView);
 
         //Get related data
         Bundle results = getIntent().getExtras();
@@ -54,8 +60,11 @@ public class drawAndDisplay extends AppCompatActivity {
                 try{
                     JSONArray items = new JSONArray(tempItems);
                     //Iterate through the array extracting the name of each officer of the company
+                    String o;
                     for (int i =0; i < items.length(); i++){
-                        Log.d("Hello", "Officer =" + items.getJSONObject(i));
+                        Log.d("Hello", "Officer =" + items.getJSONObject(i).getString("name"));
+                        oName.add(items.getJSONObject(i).getString("name"));
+                        drawNodeView.setOname(oName);
                     }
                 }catch (JSONException e){
                     e.printStackTrace();
@@ -70,5 +79,4 @@ public class drawAndDisplay extends AppCompatActivity {
         //setContentView(drawNodeView);
 
     }
-
 }
