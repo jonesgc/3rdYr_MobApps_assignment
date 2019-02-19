@@ -26,6 +26,8 @@ import java.util.Map;
 public class searchAndResults extends AppCompatActivity {
     private ArrayList<String> companyTitles = new ArrayList<>();
     private ArrayList<String> companyNumbers = new ArrayList<>();
+    private Bundle bundle = new Bundle();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,9 +110,11 @@ public class searchAndResults extends AppCompatActivity {
         requestQueueSingleton.getInstance(this).addToRequestQueue(req);
     }
 
-    public void getRelatedData(String companyNumber){
+    public void getRelatedData(String companyName ,String companyNumber){
         String officers = "https://api.companieshouse.gov.uk/company/"+ companyNumber +"/officers";
-        Log.d("Hello",officers);
+        bundle.putString("Company Name", companyName);
+        bundle.putString("Company Number", companyNumber);
+
         //Get the officers for the input company
         StringRequest req = new StringRequest(Request.Method.GET, officers,
                 new Response.Listener<String>() {
@@ -123,7 +127,7 @@ public class searchAndResults extends AppCompatActivity {
                             Log.d("Hello", res.toString());
                             JSONArray items = res.getJSONArray("items");
                             Log.d("Hello", "Items" + items);
-                            packageAndIntent();
+                            packageAndIntent(items);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -172,10 +176,13 @@ public class searchAndResults extends AppCompatActivity {
     }
 
     //Packs the relevant data to the user input select then send it to the drawAndDisplay activity
-    private void packageAndIntent(){
+    private void packageAndIntent(JSONArray jArr){
         Log.d("Hello", "packageAndIntent: starting new activity");
         //Need to collect the data to be used in the creation of the node diagram
+        bundle.putString("items",jArr.toString());
+
         Intent drawAndDisplay = new Intent(this, drawAndDisplay.class);
+        drawAndDisplay.putExtras(bundle);
         this.startActivity(drawAndDisplay);
     }
 }

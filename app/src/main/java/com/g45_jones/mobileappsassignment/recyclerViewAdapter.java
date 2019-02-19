@@ -55,7 +55,7 @@ public class recyclerViewAdapter extends RecyclerView.Adapter<recyclerViewAdapte
                 //Get the related data for the title selected, then start the intent for the node diagram.
                 if(context instanceof searchAndResults){
                     Log.d("Hello", "onClick: Calling related data with "+ companyNumber);
-                    ((searchAndResults)context).getRelatedData(companyNumber);
+                    ((searchAndResults)context).getRelatedData(title ,companyNumber);
                 }
 
             }

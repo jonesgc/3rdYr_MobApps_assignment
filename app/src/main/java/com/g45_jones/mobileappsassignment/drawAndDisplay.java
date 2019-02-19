@@ -17,6 +17,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.g45_jones.mobileappsassignment.views.DrawNodeView;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -35,10 +36,37 @@ public class drawAndDisplay extends AppCompatActivity {
         this.rootLayout = findViewById(R.id.relativeLayoutDrawAndDisplay);
 
         //Get related data
+        Bundle results = getIntent().getExtras();
+        if(results != null)
+        {
+            Log.d("Hello", "Bundle = " + results);
+            String companyName = results.getString("Company Name");
+            if (companyName != null){
+                Log.d("Hello",companyName);
+            }
+            String companyNo = results.getString("Company Number");
+            if(companyNo != null){
+                Log.d("Hello", companyNo);
+            }
+            String tempItems = results.getString("items");
+            if(tempItems != null){
+                Log.d("Hello", "Got the items");
+                try{
+                    JSONArray items = new JSONArray(tempItems);
+                    //Iterate through the array extracting the name of each officer of the company
+                    for (int i =0; i < items.length(); i++){
+                        Log.d("Hello", "Officer =" + items.getJSONObject(i));
+                    }
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
 
-        //Draw graph
-        drawNodeView = new DrawNodeView(this);
-        drawNodeView.setBackgroundColor(Color.CYAN);
+            }
+        }
+
+        // Draw graph
+        //drawNodeView = new DrawNodeView(this);
+        //drawNodeView.setBackgroundColor(Color.CYAN);
         //setContentView(drawNodeView);
 
     }
