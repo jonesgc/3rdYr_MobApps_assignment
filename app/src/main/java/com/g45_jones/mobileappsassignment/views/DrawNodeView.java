@@ -27,20 +27,21 @@ import java.util.ArrayList;
 
 public class DrawNodeView extends View {
 
-    //Node specific constants
+    //Node variables
     private final float nodeRad = 50;
+    private float rad;
+    private ArrayList<circNode> nodeList = new ArrayList<circNode>();
     Paint pBlack;
     Paint pGreen;
     Paint pRed;
+
+    //Screen
     private float width;
     private float height;
-    //Node arrays: the data "within", radius
-    private float rad;
-    private ArrayList<circNode> nodeList = new ArrayList<circNode>();
+
     //Variables to store the x and y position of a touch event
     private float tX;
     private float tY;
-    private ArrayList<String> oName;
 
     //Animation variables
     private boolean touchFlag;
@@ -51,10 +52,6 @@ public class DrawNodeView extends View {
     public DrawNodeView(Context context) {
         super(context);
         init();
-        Log.d("Hello", "oname size" + oName.size());
-        for (int i = 0; i < oName.size(); i++){
-            Log.d("Hello", "Officer name = " + oName.get(i));
-        }
     }
 
     public DrawNodeView(Context context, AttributeSet attrs) {
@@ -69,8 +66,6 @@ public class DrawNodeView extends View {
 
     private void init() {
 
-        //Get the maxium X and Y co-ordiniates, this is important for drawing the node graph
-
         pBlack = new Paint(Paint.ANTI_ALIAS_FLAG);
         pBlack.setColor(Color.BLACK);
         pBlack.setStyle(Paint.Style.FILL_AND_STROKE);
@@ -84,13 +79,6 @@ public class DrawNodeView extends View {
         pRed.setStyle(Paint.Style.FILL_AND_STROKE);
 
 
-        //Data is retrieved.
-        //Nodes are created with the company title at the center.
-        nodeList.add(new circNode(nodeRad, (float) 100.0, (float) 200.0, "TITLE", pGreen));
-        nodeList.add(new circNode(nodeRad, (float) 500.0, (float) 300.0, "OFFICER", pGreen));
-        nodeList.add(new circNode(nodeRad, (float) 200.0, (float) 1000.0, "LEAF TITLE", pGreen));
-
-
     }
 
     //All the nodes and lines are executed within this function
@@ -99,18 +87,19 @@ public class DrawNodeView extends View {
         super.onDraw(canvas);
         invalidate();
 
-        //connect the two nodes.
-        connections(canvas, 0, 1);
-        connections(canvas, 1, 2);
+        if(!nodeList.isEmpty()){
+            //connect the two nodes.
+            //connections(canvas, 0, 1);
+            //connections(canvas, 1, 2);
 
-        //Draw nodes
-        for (int i = 0; i < nodeList.size(); i++) {
-            canvas.drawCircle(nodeList.get(i).getX(),
-                    nodeList.get(i).getY(),
-                    nodeList.get(i).getRadius(),
-                    nodeList.get(i).getColour());
+            //Draw nodes
+            for (int i = 0; i < nodeList.size(); i++) {
+                canvas.drawCircle(nodeList.get(i).getX(),
+                        nodeList.get(i).getY(),
+                        nodeList.get(i).getRadius(),
+                        nodeList.get(i).getColour());
+            }
         }
-
     }
 
     @Override
@@ -141,6 +130,7 @@ public class DrawNodeView extends View {
                         }
                     }
                     Log.d("Hello", "onTouchEvent: UP");
+
                     touched = null;
                     threshold=0;
                 }
@@ -190,17 +180,35 @@ public class DrawNodeView extends View {
     }
 
     public void connections(Canvas canvas, int node1, int node2) {
+        if(!nodeList.isEmpty()){
+            canvas.drawLine(nodeList.get(node1).getX(),
+                    nodeList.get(node1).getY(),
+                    nodeList.get(node2).getX(),
+                    nodeList.get(node2).getY(),
+                    pBlack);
+        }
 
-        canvas.drawLine(nodeList.get(node1).getX(),
-                nodeList.get(node1).getY(),
-                nodeList.get(node2).getX(),
-                nodeList.get(node2).getY(),
-                pBlack);
     }
 
-    public void setOname(ArrayList<String> o){
-        oName = new ArrayList<>(o);
-    }
+    public void createNodeDiagram(String companyName,String companyNumber ,ArrayList<String> officers){
 
+        //Data is retrieved.
+        //Nodes are created with the company title at the center.
+
+        Log.d("Hello", companyName);
+        if (nodeList == null){
+            Log.d("Hello", "Its null");
+
+        }
+
+        nodeList.add(new circNode(nodeRad, (float) 500.0, (float) 500.0, companyName, pGreen));
+        //double angle = Math.cos(Math.toRadians(90));
+        //Log.d("Hello", "createNodeDiagram:" + angle);
+
+//        for (int i = 0; i < officers.size(); i++){
+//            nodeList.add(new circNode(nodeRad, (float) 500.0, (float) 300.0, officers.get(i), pGreen));
+//        }
+
+    }
 }
 

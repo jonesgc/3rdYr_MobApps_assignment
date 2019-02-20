@@ -33,6 +33,8 @@ public class drawAndDisplay extends AppCompatActivity {
     private ViewGroup rootLayout;
 
     private ArrayList<String> oName = new ArrayList<>();
+    String name;
+    String number;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,10 +51,13 @@ public class drawAndDisplay extends AppCompatActivity {
             String companyName = results.getString("Company Name");
             if (companyName != null){
                 Log.d("Hello",companyName);
+                name = companyName;
+
             }
             String companyNo = results.getString("Company Number");
             if(companyNo != null){
                 Log.d("Hello", companyNo);
+                number = companyNo;
             }
             String tempItems = results.getString("items");
             if(tempItems != null){
@@ -64,7 +69,6 @@ public class drawAndDisplay extends AppCompatActivity {
                     for (int i =0; i < items.length(); i++){
                         Log.d("Hello", "Officer =" + items.getJSONObject(i).getString("name"));
                         oName.add(items.getJSONObject(i).getString("name"));
-                        drawNodeView.setOname(oName);
                     }
                 }catch (JSONException e){
                     e.printStackTrace();
@@ -73,6 +77,7 @@ public class drawAndDisplay extends AppCompatActivity {
             }
         }
 
+        drawNodeView.createNodeDiagram(name, number, oName);
         // Draw graph
         //drawNodeView = new DrawNodeView(this);
         //drawNodeView.setBackgroundColor(Color.CYAN);
