@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -191,6 +192,7 @@ public class searchAndResults extends AppCompatActivity {
         }
         else{
             Log.d("Hello", "NO ACTIVE OFFICERS");
+            Toast.makeText(this, "No officers for that company", Toast.LENGTH_SHORT).show();
         }
     }
 }

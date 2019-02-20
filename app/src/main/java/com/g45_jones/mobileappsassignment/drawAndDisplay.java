@@ -40,7 +40,7 @@ public class drawAndDisplay extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_draw_and_display);
-        this.rootLayout = findViewById(R.id.relativeLayoutDrawAndDisplay);
+        //this.rootLayout = findViewById(R.id.relativeLayoutDrawAndDisplay);
         drawNodeView = findViewById(R.id.nodeView);
 
         //Get related data

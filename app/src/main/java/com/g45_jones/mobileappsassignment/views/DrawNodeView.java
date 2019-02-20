@@ -117,7 +117,6 @@ public class DrawNodeView extends View {
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         width = w;
         height = h;
-        //rad = (float) (Math.min(width, height) / 2*0.8);
     }
 
 
@@ -137,7 +136,7 @@ public class DrawNodeView extends View {
                     for (int i = 0; i < nodeList.size(); i++) {
                         if (checkBounds(tX, tY, nodeList.get(i).getX(), nodeList.get(i).getY())) {
                             Log.d("Hello", "onTouchEvent: bounds" + i);
-                            nodeList.get(i).setColour(pBlack);
+                            //nodeList.get(i).setColour(pBlack);
                         }
                     }
                     Log.d("Hello", "onTouchEvent: UP");
@@ -155,7 +154,7 @@ public class DrawNodeView extends View {
                 for (int i = 0; i < nodeList.size(); i++) {
                     if (checkBounds(tX, tY, nodeList.get(i).getX(), nodeList.get(i).getY())) {
                         Log.d("Hello", "onTouchEvent: bounds" + i);
-                        nodeList.get(i).setColour(pRed);
+                        //nodeList.get(i).setColour(pRed);
                         touched = i;
                     }
                 }
@@ -171,7 +170,7 @@ public class DrawNodeView extends View {
                     tY = event.getY();
                     nodeList.get(touched).setX(tX);
                     nodeList.get(touched).setY(tY);
-                    nodeList.get(touched).setColour(pRed);
+                    //nodeList.get(touched).setColour(pRed);
                 }
                 break;
             case MotionEvent.ACTION_CANCEL:
