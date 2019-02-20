@@ -34,6 +34,7 @@ public class DrawNodeView extends View {
     Paint pBlack;
     Paint pGreen;
     Paint pRed;
+    Paint pBlue;
 
     //Screen
     private float width;
@@ -78,6 +79,10 @@ public class DrawNodeView extends View {
         pRed.setColor(Color.RED);
         pRed.setStyle(Paint.Style.FILL_AND_STROKE);
 
+        pBlue = new Paint(Paint.ANTI_ALIAS_FLAG);
+        pBlue.setColor(Color.BLUE);
+        pBlue.setStyle(Paint.Style.FILL_AND_STROKE);
+
 
     }
 
@@ -87,10 +92,16 @@ public class DrawNodeView extends View {
         super.onDraw(canvas);
         invalidate();
 
-        if(!nodeList.isEmpty()){
-            //connect the two nodes.
-            //connections(canvas, 0, 1);
-            //connections(canvas, 1, 2);
+        if (!nodeList.isEmpty()) {
+            //connect the nodes
+            if(nodeList.size() == 2){
+                connections(canvas,0,1);
+            }
+            else if(nodeList.size() > 2){
+                for (int i =1; i < nodeList.size(); i++){
+                    connections(canvas,0, i);
+                }
+            }
 
             //Draw nodes
             for (int i = 0; i < nodeList.size(); i++) {
@@ -132,7 +143,7 @@ public class DrawNodeView extends View {
                     Log.d("Hello", "onTouchEvent: UP");
 
                     touched = null;
-                    threshold=0;
+                    threshold = 0;
                 }
                 break;
             case MotionEvent.ACTION_DOWN:
@@ -153,7 +164,7 @@ public class DrawNodeView extends View {
             case MotionEvent.ACTION_MOVE:
                 //since the nodelist starts at 0 we need to use an Integer to check if its null or 0
                 Log.d("Hello", "Movement event +1 threshold");
-                threshold+=1;
+                threshold += 1;
                 if (touched != null && threshold >= 5) {
                     Log.d("Hello", "Moving " + touched);
                     tX = event.getX();
@@ -180,7 +191,7 @@ public class DrawNodeView extends View {
     }
 
     public void connections(Canvas canvas, int node1, int node2) {
-        if(!nodeList.isEmpty()){
+        if (!nodeList.isEmpty()) {
             canvas.drawLine(nodeList.get(node1).getX(),
                     nodeList.get(node1).getY(),
                     nodeList.get(node2).getX(),
@@ -190,24 +201,33 @@ public class DrawNodeView extends View {
 
     }
 
-    public void createNodeDiagram(String companyName,String companyNumber ,ArrayList<String> officers){
-
-        //Data is retrieved.
+    public void createNodeDiagram(String companyName, String companyNumber, ArrayList<String> officers) {
         //Nodes are created with the company title at the center.
+        //Spacing is used to increase the radius of the "circle" being used to calcuate the parametric
+        float spacing = 200;
+        int offset = 360 / officers.size();
+        int base = 0;
 
-        Log.d("Hello", companyName);
-        if (nodeList == null){
-            Log.d("Hello", "Its null");
-
+        if(officers.size() >= 10 & officers.size() <= 20 ){
+            spacing+= 100;
+        }
+        else if (officers.size() > 20){
+            spacing+= 400;
         }
 
         nodeList.add(new circNode(nodeRad, (float) 500.0, (float) 500.0, companyName, pGreen));
-        //double angle = Math.cos(Math.toRadians(90));
-        //Log.d("Hello", "createNodeDiagram:" + angle);
 
-//        for (int i = 0; i < officers.size(); i++){
-//            nodeList.add(new circNode(nodeRad, (float) 500.0, (float) 300.0, officers.get(i), pGreen));
-//        }
+
+        for (int i = 0; i < officers.size(); i++) {
+            double angle = Math.toRadians(base);
+            float x = (float) 500 + (float) (nodeRad + spacing) * (float) Math.cos(angle);
+            float y = (float) 500 + (float) (nodeRad + spacing) * (float) Math.sin(angle);
+
+            nodeList.add(new circNode(nodeRad, (float) x, (float) y, officers.get(i), pBlue));
+            Log.d("Hello", "Base is current: " + base);
+            base = base + offset;
+            Log.d("Hello", "Base + offset = " + base );
+        }
 
     }
 }

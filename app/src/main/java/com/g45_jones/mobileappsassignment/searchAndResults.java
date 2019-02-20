@@ -126,6 +126,10 @@ public class searchAndResults extends AppCompatActivity {
                             Log.d("Hello", "Query sent");
                             Log.d("Hello", res.toString());
                             JSONArray items = res.getJSONArray("items");
+                            int active = res.getInt("active_count");
+                            if(active == 0){
+                                items = null;
+                            }
                             Log.d("Hello", "Items" + items);
                             packageAndIntent(items);
                         } catch (JSONException e) {
@@ -179,10 +183,14 @@ public class searchAndResults extends AppCompatActivity {
     private void packageAndIntent(JSONArray jArr){
         Log.d("Hello", "packageAndIntent: starting new activity");
         //Need to collect the data to be used in the creation of the node diagram
-        bundle.putString("items",jArr.toString());
-
-        Intent drawAndDisplay = new Intent(this, drawAndDisplay.class);
-        drawAndDisplay.putExtras(bundle);
-        this.startActivity(drawAndDisplay);
+        if(jArr != null){
+            bundle.putString("items",jArr.toString());
+            Intent drawAndDisplay = new Intent(this, drawAndDisplay.class);
+            drawAndDisplay.putExtras(bundle);
+            this.startActivity(drawAndDisplay);
+        }
+        else{
+            Log.d("Hello", "NO ACTIVE OFFICERS");
+        }
     }
 }
