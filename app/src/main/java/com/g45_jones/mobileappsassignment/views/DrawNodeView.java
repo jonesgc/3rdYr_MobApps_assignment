@@ -62,6 +62,9 @@ public class DrawNodeView extends View {
     private RectF contentRect;
     private ScaleGestureDetector scaleListener;
     private float scaleFactor = 1.0f;
+    private ArrayList<Float> oldX = new ArrayList<>();
+    private ArrayList<Float> oldY = new ArrayList<>();
+    private boolean scroll;
 
     public DrawNodeView(Context context) {
         super(context);
@@ -112,8 +115,15 @@ public class DrawNodeView extends View {
 
 
         canvas.save();
+        //Get old values
+        for (int i = 0; i < nodeList.size(); i++) {
+            oldX.add(nodeList.get(i).getX());
+            oldY.add(nodeList.get(i).getY());
+        }
+
 
         canvas.scale(scaleFactor, scaleFactor, 500, 500);
+
         if (!nodeList.isEmpty()) {
             //connect the nodes
             if (nodeList.size() == 2) {
@@ -125,12 +135,37 @@ public class DrawNodeView extends View {
             }
 
             //Draw nodes
-            for (int i = 0; i < nodeList.size(); i++) {
-                canvas.drawCircle(nodeList.get(i).getX(),
-                        nodeList.get(i).getY(),
-                        nodeList.get(i).getRadius(),
-                        nodeList.get(i).getColour());
+            if(scroll){
+                for (int i = 0; i < nodeList.size(); i++) {
+                    //Account for scaling
+                    if(scaleFactor >= 1){
+                        float x = oldX.get(i) + (oldX.get(i) - 500)*(scaleFactor - 1);
+                        float y = oldY.get(i) + (oldY.get(i) - 500)*(scaleFactor - 1);
+                        nodeList.get(i).setX(x);
+                        nodeList.get(i).setY(y);
+                    }
+                    else{
+                        float x = oldX.get(i) - (oldX.get(i) - 500)*(1 - scaleFactor);
+                        float y = oldY.get(i) - (oldY.get(i) - 500)*(1 - scaleFactor);
+                        nodeList.get(i).setX(x);
+                        nodeList.get(i).setY(y);
+                    }
+                    canvas.drawCircle(nodeList.get(i).getX(),
+                            nodeList.get(i).getY(),
+                            nodeList.get(i).getRadius(),
+                            nodeList.get(i).getColour());
+                }
+                scroll = false;
             }
+            else{
+                for (int i = 0; i < nodeList.size(); i++) {
+                    canvas.drawCircle(nodeList.get(i).getX(),
+                            nodeList.get(i).getY(),
+                            nodeList.get(i).getRadius(),
+                            nodeList.get(i).getColour());
+                }
+            }
+
         }
         canvas.restore();
     }
@@ -171,16 +206,6 @@ public class DrawNodeView extends View {
                             }
                         }
                         //Log.d("Hello", "onTouchEvent: UP");
-                        if(scaleFactor >= 1){
-                            float oldx = nodeList.get(0).getX();
-                            float test = oldx + (oldx - 500)*(scaleFactor - 1);
-                            Log.d("Hello", "Position of 0 should be " + test);
-                        }
-                        else{
-                            float oldx = nodeList.get(0).getX();
-                            float test = oldx - (oldx - 500)*(1 - scaleFactor);
-                            Log.d("Hello", "Position of 0 should be " + test);
-                        }
                         touched = null;
                         threshold = 0;
                     }
@@ -294,7 +319,7 @@ public class DrawNodeView extends View {
 
             // Don't let the object get too small or too large.
             scaleFactor = Math.max(0.1f, Math.min(scaleFactor, 5.0f));
-
+            scroll = true;
             invalidate();
             return true;
         }
