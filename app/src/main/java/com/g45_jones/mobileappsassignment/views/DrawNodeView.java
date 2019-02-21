@@ -3,6 +3,7 @@ package com.g45_jones.mobileappsassignment.views;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.support.v4.view.GestureDetectorCompat;
@@ -19,6 +20,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.g45_jones.mobileappsassignment.R;
 import com.g45_jones.mobileappsassignment.circNode;
@@ -48,21 +50,25 @@ public class DrawNodeView extends View {
     private boolean touchFlag;
     private Integer touched;
     private float threshold;
+    private boolean moved;
 
 
     public DrawNodeView(Context context) {
         super(context);
         init();
+        this.setDrawingCacheEnabled(true);
     }
 
     public DrawNodeView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
+        this.setDrawingCacheEnabled(true);
     }
 
     public DrawNodeView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init();
+        this.setDrawingCacheEnabled(true);
     }
 
     private void init() {
@@ -128,25 +134,28 @@ public class DrawNodeView extends View {
             case MotionEvent.ACTION_UP:
                 if (touchFlag) {
                     tX = event.getX();
-                    Log.d("Hello", "X pos =" + tX);
+                    //Log.d("Hello", "X pos =" + tX);
                     tY = event.getY();
-                    Log.d("Hello", "Y pos =" + tY);
+                    //Log.d("Hello", "Y pos =" + tY);
                     touchFlag = true;
                     //Iterate through the nodeList checking if the touch event hit any of the nodes
                     for (int i = 0; i < nodeList.size(); i++) {
                         if (checkBounds(tX, tY, nodeList.get(i).getX(), nodeList.get(i).getY())) {
                             Log.d("Hello", "onTouchEvent: bounds" + i);
                             //nodeList.get(i).setColour(pBlack);
+                            if(!moved){
+                                Toast.makeText(getContext(), nodeList.get(i).getTitle(), Toast.LENGTH_SHORT).show();
+                            }
                         }
                     }
-                    Log.d("Hello", "onTouchEvent: UP");
+                    //Log.d("Hello", "onTouchEvent: UP");
 
                     touched = null;
                     threshold = 0;
                 }
                 break;
             case MotionEvent.ACTION_DOWN:
-                Log.d("Hello", "ACtion down");
+                //Log.d("Hello", "ACtion down");
                 //Look if the action was inside a node
                 tX = event.getX();
                 tY = event.getY();
@@ -159,17 +168,19 @@ public class DrawNodeView extends View {
                     }
                 }
                 touchFlag = true;
+                moved = false;
                 break;
             case MotionEvent.ACTION_MOVE:
                 //since the nodelist starts at 0 we need to use an Integer to check if its null or 0
-                Log.d("Hello", "Movement event +1 threshold");
+                //Log.d("Hello", "Movement event +1 threshold");
                 threshold += 1;
-                if (touched != null && threshold >= 5) {
+                if (touched != null && threshold >= 15) {
                     Log.d("Hello", "Moving " + touched);
                     tX = event.getX();
                     tY = event.getY();
                     nodeList.get(touched).setX(tX);
                     nodeList.get(touched).setY(tY);
+                    moved = true;
                     //nodeList.get(touched).setColour(pRed);
                 }
                 break;
@@ -228,6 +239,11 @@ public class DrawNodeView extends View {
             Log.d("Hello", "Base + offset = " + base );
         }
 
+    }
+
+    //Gets the bitmap image of the canvas from the cache
+    public Bitmap getBitmap(){
+        return this.getDrawingCache();
     }
 }
 

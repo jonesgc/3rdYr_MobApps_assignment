@@ -1,13 +1,17 @@
 package com.g45_jones.mobileappsassignment;
 
 import android.graphics.Color;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -36,12 +40,22 @@ public class drawAndDisplay extends AppCompatActivity {
     String name;
     String number;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_draw_and_display);
         //this.rootLayout = findViewById(R.id.relativeLayoutDrawAndDisplay);
         drawNodeView = findViewById(R.id.nodeView);
+
+        //Action bar for back button:
+        //Adapted from: https://www.freakyjolly.com/how-to-add-back-arrow-in-android-activity/#more-590
+        ActionBar actionBar = getSupportActionBar();
+
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         //Get related data
         Bundle results = getIntent().getExtras();
@@ -84,4 +98,17 @@ public class drawAndDisplay extends AppCompatActivity {
         //setContentView(drawNodeView);
 
     }
+    public boolean onOptionsItemSelected(MenuItem item){
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return true;
+    }
+
 }
