@@ -50,6 +50,9 @@ public class DrawNodeView extends View {
     private float tX;
     private float tY;
 
+    private float pX;
+    private float pY;
+
     //Animation variables
     private boolean touchFlag;
     private Integer touched;
@@ -59,7 +62,6 @@ public class DrawNodeView extends View {
     private RectF contentRect;
     private ScaleGestureDetector scaleListener;
     private float scaleFactor = 1.0f;
-
 
     public DrawNodeView(Context context) {
         super(context);
@@ -110,6 +112,7 @@ public class DrawNodeView extends View {
 
 
         canvas.save();
+
         canvas.scale(scaleFactor, scaleFactor, 500, 500);
         if (!nodeList.isEmpty()) {
             //connect the nodes
@@ -168,7 +171,16 @@ public class DrawNodeView extends View {
                             }
                         }
                         //Log.d("Hello", "onTouchEvent: UP");
-
+                        if(scaleFactor >= 1){
+                            float oldx = nodeList.get(0).getX();
+                            float test = oldx + (oldx - 500)*(scaleFactor - 1);
+                            Log.d("Hello", "Position of 0 should be " + test);
+                        }
+                        else{
+                            float oldx = nodeList.get(0).getX();
+                            float test = oldx - (oldx - 500)*(1 - scaleFactor);
+                            Log.d("Hello", "Position of 0 should be " + test);
+                        }
                         touched = null;
                         threshold = 0;
                     }
