@@ -4,7 +4,10 @@ import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.graphics.Point;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.support.v4.view.GestureDetectorCompat;
 import android.util.AttributeSet;
@@ -16,6 +19,7 @@ import android.view.Display;
 import android.view.DragEvent;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.LinearInterpolator;
@@ -51,6 +55,10 @@ public class DrawNodeView extends View {
     private Integer touched;
     private float threshold;
     private boolean moved;
+    private Rect currentView;
+    private RectF contentRect;
+    private ScaleGestureDetector scaleListener;
+    private float scaleFactor = 1.0f;
 
 
     public DrawNodeView(Context context) {
@@ -62,6 +70,7 @@ public class DrawNodeView extends View {
     public DrawNodeView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
+
         this.setDrawingCacheEnabled(true);
     }
 
@@ -72,6 +81,8 @@ public class DrawNodeView extends View {
     }
 
     private void init() {
+        scaleListener = new ScaleGestureDetector(getContext(), new scaleListener());
+
 
         pBlack = new Paint(Paint.ANTI_ALIAS_FLAG);
         pBlack.setColor(Color.BLACK);
@@ -88,8 +99,7 @@ public class DrawNodeView extends View {
         pBlue = new Paint(Paint.ANTI_ALIAS_FLAG);
         pBlue.setColor(Color.BLUE);
         pBlue.setStyle(Paint.Style.FILL_AND_STROKE);
-
-
+        currentView = new Rect();
     }
 
     //All the nodes and lines are executed within this function
@@ -98,14 +108,16 @@ public class DrawNodeView extends View {
         super.onDraw(canvas);
         invalidate();
 
+
+        canvas.save();
+        canvas.scale(scaleFactor, scaleFactor, 500, 500);
         if (!nodeList.isEmpty()) {
             //connect the nodes
-            if(nodeList.size() == 2){
-                connections(canvas,0,1);
-            }
-            else if(nodeList.size() > 2){
-                for (int i =1; i < nodeList.size(); i++){
-                    connections(canvas,0, i);
+            if (nodeList.size() == 2) {
+                connections(canvas, 0, 1);
+            } else if (nodeList.size() > 2) {
+                for (int i = 1; i < nodeList.size(); i++) {
+                    connections(canvas, 0, i);
                 }
             }
 
@@ -117,6 +129,7 @@ public class DrawNodeView extends View {
                         nodeList.get(i).getColour());
             }
         }
+        canvas.restore();
     }
 
     @Override
@@ -128,66 +141,79 @@ public class DrawNodeView extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        int pointers = event.getPointerCount();
 
-        switch (event.getActionMasked() & MotionEvent.ACTION_MASK) {
-            //This event follows an ACTION_DOWN and consittudes a tap.
-            case MotionEvent.ACTION_UP:
-                if (touchFlag) {
+
+        //Log.d("Hello", "pointers = " + pointers);
+        //Two fingers for scaling
+        if(pointers == 1){
+            switch (event.getActionMasked() & MotionEvent.ACTION_MASK) {
+                //This event follows an ACTION_DOWN and consittudes a tap.
+                case MotionEvent.ACTION_UP:
+                    if (touchFlag) {
+                        tX = event.getX();
+                        Log.d("Hello", "X pos =" + tX);
+                        tY = event.getY();
+                        Log.d("Hello", "Y pos =" + tY);
+                        touchFlag = true;
+                        //Iterate through the nodeList checking if the touch event hit any of the nodes
+                        for (int i = 0; i < nodeList.size(); i++) {
+                            Log.d("Hello", "Node" + i + " x pos =" + nodeList.get(i).getX() + "y pos" + nodeList.get(i).getY());
+                            if (checkBounds(tX, tY, nodeList.get(i).getX(), nodeList.get(i).getY())) {
+                                Log.d("Hello", "onTouchEvent: bounds" + i);
+                                //nodeList.get(i).setColour(pBlack);
+                                if (!moved) {
+                                    Toast.makeText(getContext(), nodeList.get(i).getTitle(), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        }
+                        //Log.d("Hello", "onTouchEvent: UP");
+
+                        touched = null;
+                        threshold = 0;
+                    }
+                    break;
+                case MotionEvent.ACTION_DOWN:
+                    //Log.d("Hello", "ACtion down");
+                    //Look if the action was inside a node
                     tX = event.getX();
-                    //Log.d("Hello", "X pos =" + tX);
                     tY = event.getY();
-                    //Log.d("Hello", "Y pos =" + tY);
-                    touchFlag = true;
                     //Iterate through the nodeList checking if the touch event hit any of the nodes
                     for (int i = 0; i < nodeList.size(); i++) {
                         if (checkBounds(tX, tY, nodeList.get(i).getX(), nodeList.get(i).getY())) {
                             Log.d("Hello", "onTouchEvent: bounds" + i);
-                            //nodeList.get(i).setColour(pBlack);
-                            if(!moved){
-                                Toast.makeText(getContext(), nodeList.get(i).getTitle(), Toast.LENGTH_SHORT).show();
-                            }
+                            //nodeList.get(i).setColour(pRed);
+                            touched = i;
                         }
                     }
-                    //Log.d("Hello", "onTouchEvent: UP");
+                    touchFlag = true;
+                    moved = false;
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    //since the nodelist starts at 0 we need to use an Integer to check if its null or 0
+                    //Log.d("Hello", "Movement event +1 threshold");
+                    threshold += 1;
+                    if (touched != null && threshold >= 15) {
+                        Log.d("Hello", "Moving " + touched);
+                        tX = event.getX();
+                        tY = event.getY();
+                        nodeList.get(touched).setX(tX);
+                        nodeList.get(touched).setY(tY);
+                        moved = true;
+                        //nodeList.get(touched).setColour(pRed);
+                    } else {
 
-                    touched = null;
-                    threshold = 0;
-                }
-                break;
-            case MotionEvent.ACTION_DOWN:
-                //Log.d("Hello", "ACtion down");
-                //Look if the action was inside a node
-                tX = event.getX();
-                tY = event.getY();
-                //Iterate through the nodeList checking if the touch event hit any of the nodes
-                for (int i = 0; i < nodeList.size(); i++) {
-                    if (checkBounds(tX, tY, nodeList.get(i).getX(), nodeList.get(i).getY())) {
-                        Log.d("Hello", "onTouchEvent: bounds" + i);
-                        //nodeList.get(i).setColour(pRed);
-                        touched = i;
                     }
-                }
-                touchFlag = true;
-                moved = false;
-                break;
-            case MotionEvent.ACTION_MOVE:
-                //since the nodelist starts at 0 we need to use an Integer to check if its null or 0
-                //Log.d("Hello", "Movement event +1 threshold");
-                threshold += 1;
-                if (touched != null && threshold >= 15) {
-                    Log.d("Hello", "Moving " + touched);
-                    tX = event.getX();
-                    tY = event.getY();
-                    nodeList.get(touched).setX(tX);
-                    nodeList.get(touched).setY(tY);
-                    moved = true;
-                    //nodeList.get(touched).setColour(pRed);
-                }
-                break;
-            case MotionEvent.ACTION_CANCEL:
-                Log.d("Hello", "onTouchEvent: Canceled");
-                break;
+                    break;
+                case MotionEvent.ACTION_CANCEL:
+                    Log.d("Hello", "onTouchEvent: Canceled");
+                    break;
+            }
         }
+        else if(pointers == 2){
+            scaleListener.onTouchEvent(event);
+        }
+
         return true;
     }
 
@@ -218,11 +244,10 @@ public class DrawNodeView extends View {
         int offset = 360 / officers.size();
         int base = 0;
 
-        if(officers.size() >= 10 & officers.size() <= 20 ){
-            spacing+= 100;
-        }
-        else if (officers.size() > 20){
-            spacing+= 400;
+        if (officers.size() >= 10 & officers.size() <= 20) {
+            spacing += 100;
+        } else if (officers.size() > 20) {
+            spacing += 400;
         }
 
         nodeList.add(new circNode(nodeRad, (float) 500.0, (float) 500.0, companyName, pGreen));
@@ -236,14 +261,30 @@ public class DrawNodeView extends View {
             nodeList.add(new circNode(nodeRad, (float) x, (float) y, officers.get(i), pBlue));
             Log.d("Hello", "Base is current: " + base);
             base = base + offset;
-            Log.d("Hello", "Base + offset = " + base );
+            Log.d("Hello", "Base + offset = " + base);
         }
 
     }
 
     //Gets the bitmap image of the canvas from the cache
-    public Bitmap getBitmap(){
+    public Bitmap getBitmap() {
         return this.getDrawingCache();
     }
-}
 
+
+    public class scaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
+
+
+
+        @Override
+        public boolean onScale(ScaleGestureDetector detector) {
+            scaleFactor *= detector.getScaleFactor();
+
+            // Don't let the object get too small or too large.
+            scaleFactor = Math.max(0.1f, Math.min(scaleFactor, 5.0f));
+
+            invalidate();
+            return true;
+        }
+    }
+}

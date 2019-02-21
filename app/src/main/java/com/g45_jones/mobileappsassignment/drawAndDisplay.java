@@ -48,7 +48,6 @@ public class drawAndDisplay extends AppCompatActivity {
         setContentView(R.layout.activity_draw_and_display);
         //this.rootLayout = findViewById(R.id.relativeLayoutDrawAndDisplay);
         drawNodeView = findViewById(R.id.nodeView);
-
         //Action bar for back button:
         //Adapted from: https://www.freakyjolly.com/how-to-add-back-arrow-in-android-activity/#more-590
         ActionBar actionBar = getSupportActionBar();
@@ -98,6 +97,8 @@ public class drawAndDisplay extends AppCompatActivity {
         //setContentView(drawNodeView);
 
     }
+
+    //Functions used for the back button.
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()) {
             case android.R.id.home:
