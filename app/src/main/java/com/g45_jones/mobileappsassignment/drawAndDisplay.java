@@ -1,5 +1,6 @@
 package com.g45_jones.mobileappsassignment;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -37,6 +38,7 @@ public class drawAndDisplay extends AppCompatActivity {
     private ViewGroup rootLayout;
 
     private ArrayList<String> oName = new ArrayList<>();
+    private ArrayList<JSONObject> oItems = new ArrayList<>();
     String name;
     String number;
 
@@ -46,8 +48,8 @@ public class drawAndDisplay extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_draw_and_display);
-        //this.rootLayout = findViewById(R.id.relativeLayoutDrawAndDisplay);
         drawNodeView = findViewById(R.id.nodeView);
+
         //Action bar for back button:
         //Adapted from: https://www.freakyjolly.com/how-to-add-back-arrow-in-android-activity/#more-590
         ActionBar actionBar = getSupportActionBar();
@@ -80,8 +82,9 @@ public class drawAndDisplay extends AppCompatActivity {
                     //Iterate through the array extracting the name of each officer of the company
                     String o;
                     for (int i =0; i < items.length(); i++){
-                        Log.d("Hello", "Officer =" + items.getJSONObject(i).getString("name"));
+                        Log.d("Hello", "Officer =" + items.getJSONObject(i));
                         oName.add(items.getJSONObject(i).getString("name"));
+                        oItems.add(items.getJSONObject(i));
                     }
                 }catch (JSONException e){
                     e.printStackTrace();
@@ -90,12 +93,7 @@ public class drawAndDisplay extends AppCompatActivity {
             }
         }
 
-        drawNodeView.createNodeDiagram(name, number, oName);
-        // Draw graph
-        //drawNodeView = new DrawNodeView(this);
-        //drawNodeView.setBackgroundColor(Color.CYAN);
-        //setContentView(drawNodeView);
-
+        drawNodeView.createNodeDiagram(name, number, oName, oItems);
     }
 
     //Functions used for the back button.

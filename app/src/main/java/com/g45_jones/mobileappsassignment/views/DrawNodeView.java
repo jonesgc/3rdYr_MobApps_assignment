@@ -3,12 +3,14 @@ package com.g45_jones.mobileappsassignment.views;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.support.v4.view.GestureDetectorCompat;
 import android.util.AttributeSet;
 import android.graphics.Canvas;
@@ -29,11 +31,16 @@ import android.widget.Toast;
 
 import com.g45_jones.mobileappsassignment.R;
 import com.g45_jones.mobileappsassignment.circNode;
+import com.g45_jones.mobileappsassignment.drawAndDisplay;
+import com.g45_jones.mobileappsassignment.nodeInfomationDisplay;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
 public class DrawNodeView extends View {
 
+    drawAndDisplay activity = new drawAndDisplay();
     //Node variables
     private final float nodeRad = 50;
     private float rad;
@@ -71,27 +78,30 @@ public class DrawNodeView extends View {
     private float oldTouchY;
     private boolean pan;
 
+    private Context ctx;
 
     public DrawNodeView(Context context) {
         super(context);
-        init();
+        init(context);
         this.setDrawingCacheEnabled(true);
     }
 
     public DrawNodeView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init();
+        init(context);
 
         this.setDrawingCacheEnabled(true);
     }
 
     public DrawNodeView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        init();
+        init(context);
         this.setDrawingCacheEnabled(true);
     }
 
-    private void init() {
+    private void init(Context context) {
+        ctx = context;
+
         DisplayMetrics metrics = new DisplayMetrics();
         ((Activity)getContext()).getWindowManager().getDefaultDisplay().getMetrics(metrics);
         width = metrics.widthPixels;
@@ -218,7 +228,19 @@ public class DrawNodeView extends View {
 
                                 //If there has been no movement that means it is a tap, display info
                                 if (!moved) {
-                                    Toast.makeText(getContext(), nodeList.get(i).getTitle(), Toast.LENGTH_SHORT).show();
+                                    String title = nodeList.get(i).getTitle();
+                                    Toast.makeText(getContext(), title, Toast.LENGTH_SHORT).show();
+
+                                    Bundle infoBundle = new Bundle();
+
+                                    infoBundle.putString("title",title);
+                                    Intent nodeInformationDisplay = new Intent(ctx,nodeInfomationDisplay.class);
+                                    nodeInformationDisplay.putExtras(infoBundle);
+                                    nodeInformationDisplay.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    ctx.startActivity(nodeInformationDisplay);
+
+                                    //activity.displayNode(infoBundle);
+
                                 }
                             }
                         }
@@ -305,7 +327,9 @@ public class DrawNodeView extends View {
 
     }
 
-    public void createNodeDiagram(String companyName, String companyNumber, ArrayList<String> officers) {
+    public void createNodeDiagram(String companyName, String companyNumber, ArrayList<String> officers,
+                                  ArrayList<JSONObject> items) {
+
         //Nodes are created with the company title at the center.
         //Spacing is used to increase the radius of the "circle" being used to calcuate the parametric
         float spacing = 200;
@@ -318,7 +342,9 @@ public class DrawNodeView extends View {
             spacing += 400;
         }
 
-        nodeList.add(new circNode(nodeRad, (float) width/2, (float) height/2, companyName, pGreen));
+        //Central company node
+        nodeList.add(new circNode(nodeRad, (float) width/2, (float) height/2, companyName,
+                pGreen, null));
 
 
         for (int i = 0; i < officers.size(); i++) {
@@ -326,7 +352,10 @@ public class DrawNodeView extends View {
             float x = (float) (width/2) + (float) (nodeRad + spacing) * (float) Math.cos(angle);
             float y = (float) (height/2) + (float) (nodeRad + spacing) * (float) Math.sin(angle);
 
-            nodeList.add(new circNode(nodeRad, (float) x, (float) y, officers.get(i), pBlue));
+            //Officers
+            nodeList.add(new circNode(nodeRad, (float) x, (float) y, officers.get(i),
+                    pBlue, items.get(i)));
+            
             Log.d("Hello", "Base is current: " + base);
             base = base + offset;
             Log.d("Hello", "Base + offset = " + base);

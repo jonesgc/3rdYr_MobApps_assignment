@@ -2,6 +2,8 @@ package com.g45_jones.mobileappsassignment;
 
 import android.graphics.Paint;
 
+import org.json.JSONObject;
+
 public class circNode {
 
     private float radius;
@@ -9,13 +11,15 @@ public class circNode {
     private float y;
     private String title;
     private Paint colour;
+    private JSONObject item;
 
-    public circNode(float r, float X, float Y, String t, Paint p){
+    public circNode(float r, float X, float Y, String t, Paint p, JSONObject i){
         radius = r;
         x = X;
         y = Y;
         title = t;
         colour = p;
+        item = i;
     }
 
     //getters for values.
@@ -30,6 +34,8 @@ public class circNode {
     public float getY(){
         return y;
     }
+
+    public JSONObject getItem(){return item;}
 
     public String getTitle(){
         return title;
