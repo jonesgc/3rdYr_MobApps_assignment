@@ -14,6 +14,7 @@ import android.util.AttributeSet;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.DragEvent;
@@ -45,13 +46,11 @@ public class DrawNodeView extends View {
     //Screen
     private float width;
     private float height;
+    DisplayMetrics metrics;
 
     //Variables to store the x and y position of a touch event
     private float tX;
     private float tY;
-
-    private float pX;
-    private float pY;
 
     //Animation variables
     private boolean touchFlag;
@@ -65,6 +64,13 @@ public class DrawNodeView extends View {
     private ArrayList<Float> oldX = new ArrayList<>();
     private ArrayList<Float> oldY = new ArrayList<>();
     private boolean scroll;
+
+    private float panX;
+    private float panY;
+    private float oldTouchX;
+    private float oldTouchY;
+    private boolean pan;
+
 
     public DrawNodeView(Context context) {
         super(context);
@@ -86,6 +92,12 @@ public class DrawNodeView extends View {
     }
 
     private void init() {
+        DisplayMetrics metrics = new DisplayMetrics();
+        ((Activity)getContext()).getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        width = metrics.widthPixels;
+        height = metrics.heightPixels;
+        Log.d("Hello", "Height is =" + height + "Width is = "+ width);
+
         scaleListener = new ScaleGestureDetector(getContext(), new scaleListener());
 
 
@@ -115,6 +127,7 @@ public class DrawNodeView extends View {
 
 
         canvas.save();
+
         //Get old values
         for (int i = 0; i < nodeList.size(); i++) {
             oldX.add(nodeList.get(i).getX());
@@ -123,6 +136,7 @@ public class DrawNodeView extends View {
 
 
         canvas.scale(scaleFactor, scaleFactor, 500, 500);
+        canvas.translate(panX, panY);
 
         if (!nodeList.isEmpty()) {
             //connect the nodes
@@ -139,14 +153,14 @@ public class DrawNodeView extends View {
                 for (int i = 0; i < nodeList.size(); i++) {
                     //Account for scaling
                     if(scaleFactor >= 1){
-                        float x = oldX.get(i) + (oldX.get(i) - 500)*(scaleFactor - 1);
-                        float y = oldY.get(i) + (oldY.get(i) - 500)*(scaleFactor - 1);
+                        float x = oldX.get(i) + (oldX.get(i) - (width/2))*(scaleFactor - 1);
+                        float y = oldY.get(i) + (oldY.get(i) - (height/2))*(scaleFactor - 1);
                         nodeList.get(i).setX(x);
                         nodeList.get(i).setY(y);
                     }
                     else{
-                        float x = oldX.get(i) - (oldX.get(i) - 500)*(1 - scaleFactor);
-                        float y = oldY.get(i) - (oldY.get(i) - 500)*(1 - scaleFactor);
+                        float x = oldX.get(i) - (oldX.get(i) - (width/2))*(1 - scaleFactor);
+                        float y = oldY.get(i) - (oldY.get(i) - (height/2))*(1 - scaleFactor);
                         nodeList.get(i).setX(x);
                         nodeList.get(i).setY(y);
                     }
@@ -167,6 +181,7 @@ public class DrawNodeView extends View {
             }
 
         }
+        pan = false;
         canvas.restore();
     }
 
@@ -196,15 +211,23 @@ public class DrawNodeView extends View {
                         touchFlag = true;
                         //Iterate through the nodeList checking if the touch event hit any of the nodes
                         for (int i = 0; i < nodeList.size(); i++) {
-                            Log.d("Hello", "Node" + i + " x pos =" + nodeList.get(i).getX() + "y pos" + nodeList.get(i).getY());
+                            //Log.d("Hello", "Node" + i + " x pos =" + nodeList.get(i).getX() + "y pos" + nodeList.get(i).getY());
                             if (checkBounds(tX, tY, nodeList.get(i).getX(), nodeList.get(i).getY())) {
-                                Log.d("Hello", "onTouchEvent: bounds" + i);
+                                //Log.d("Hello", "onTouchEvent: bounds" + i);
                                 //nodeList.get(i).setColour(pBlack);
+
+                                //If there has been no movement that means it is a tap, display info
                                 if (!moved) {
                                     Toast.makeText(getContext(), nodeList.get(i).getTitle(), Toast.LENGTH_SHORT).show();
                                 }
                             }
                         }
+
+                        if(pan){
+                            panX = tX - oldTouchX;
+                            panY = tY - oldTouchY;
+                        }
+
                         //Log.d("Hello", "onTouchEvent: UP");
                         touched = null;
                         threshold = 0;
@@ -215,6 +238,7 @@ public class DrawNodeView extends View {
                     //Look if the action was inside a node
                     tX = event.getX();
                     tY = event.getY();
+
                     //Iterate through the nodeList checking if the touch event hit any of the nodes
                     for (int i = 0; i < nodeList.size(); i++) {
                         if (checkBounds(tX, tY, nodeList.get(i).getX(), nodeList.get(i).getY())) {
@@ -222,6 +246,12 @@ public class DrawNodeView extends View {
                             //nodeList.get(i).setColour(pRed);
                             touched = i;
                         }
+                    }
+
+                    //Nothing was touched use pan logic.
+                    if(touched == null){
+                        oldTouchX = tX;
+                        oldTouchY = tY;
                     }
                     touchFlag = true;
                     moved = false;
@@ -231,7 +261,7 @@ public class DrawNodeView extends View {
                     //Log.d("Hello", "Movement event +1 threshold");
                     threshold += 1;
                     if (touched != null && threshold >= 15) {
-                        Log.d("Hello", "Moving " + touched);
+                       // Log.d("Hello", "Moving " + touched);
                         tX = event.getX();
                         tY = event.getY();
                         nodeList.get(touched).setX(tX);
@@ -239,7 +269,8 @@ public class DrawNodeView extends View {
                         moved = true;
                         //nodeList.get(touched).setColour(pRed);
                     } else {
-
+                        Log.d("Hello", "onTouchEvent: touching nothing");
+                        pan = true;
                     }
                     break;
                 case MotionEvent.ACTION_CANCEL:
@@ -287,13 +318,13 @@ public class DrawNodeView extends View {
             spacing += 400;
         }
 
-        nodeList.add(new circNode(nodeRad, (float) 500.0, (float) 500.0, companyName, pGreen));
+        nodeList.add(new circNode(nodeRad, (float) width/2, (float) height/2, companyName, pGreen));
 
 
         for (int i = 0; i < officers.size(); i++) {
             double angle = Math.toRadians(base);
-            float x = (float) 500 + (float) (nodeRad + spacing) * (float) Math.cos(angle);
-            float y = (float) 500 + (float) (nodeRad + spacing) * (float) Math.sin(angle);
+            float x = (float) (width/2) + (float) (nodeRad + spacing) * (float) Math.cos(angle);
+            float y = (float) (height/2) + (float) (nodeRad + spacing) * (float) Math.sin(angle);
 
             nodeList.add(new circNode(nodeRad, (float) x, (float) y, officers.get(i), pBlue));
             Log.d("Hello", "Base is current: " + base);
