@@ -34,6 +34,7 @@ import com.g45_jones.mobileappsassignment.circNode;
 import com.g45_jones.mobileappsassignment.drawAndDisplay;
 import com.g45_jones.mobileappsassignment.nodeInfomationDisplay;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -354,16 +355,21 @@ public class DrawNodeView extends View {
         }
 
         try{
-            coItems = new JSONObject(cItems);
+            JSONArray temp = new JSONArray(cItems);
+            coItems = new JSONObject();
+
+            for(int i =0; i < temp.length(); i++){
+                coItems = temp.getJSONObject(i);
+            }
         }catch(JSONException e){
             e.printStackTrace();
         }
         //Central company node
         nodeList.add(new circNode(nodeRad, (float) width/2, (float) height/2, companyName,
                 pGreen, coItems));
+        Log.d("Hello", "COMAPNY " + coItems);
 
-
-        for (int i = 0; i < officers.size(); i++) {
+        for (int i = 1; i < officers.size(); i++) {
             double angle = Math.toRadians(base);
             float x;
             float y;
