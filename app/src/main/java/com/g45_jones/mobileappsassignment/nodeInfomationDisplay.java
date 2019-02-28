@@ -2,6 +2,7 @@ package com.g45_jones.mobileappsassignment;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -13,6 +14,7 @@ public class nodeInfomationDisplay extends AppCompatActivity {
 
     String title;
     JSONObject items;
+    String officerInfo;
     TextView titleView;
     TextView infoView;
 
@@ -20,7 +22,7 @@ public class nodeInfomationDisplay extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_node_info_display);
-
+        officerInfo = "";
         titleView = findViewById(R.id.titleView);
         infoView = findViewById(R.id.infoView);
 
@@ -40,15 +42,65 @@ public class nodeInfomationDisplay extends AppCompatActivity {
             if (stringItems != null) {
                 //Log.d("Hello", stringItems);
                 try{
+                    //Add the various tiems to a string that will then be put into a text view.
+                    //Due to this most of the formatting is done inside the string.
+                    //THis could be replaced by programmatically generating the text views for each item.
                     items = new JSONObject(stringItems);
-                    Log.d("Hello", "items =" + items);
+
+                    if(items.has("date_of_birth")){
+                        officerInfo += "Date of birth: " + items.getJSONObject("date_of_birth").
+                                getInt("month") + "/" + items.getJSONObject("date_of_birth")
+                                .getInt("year")+"\n";
+                    }
+
+                    if(items.has("appointed_on")){
+                        officerInfo += "Officer appointed on: " +
+                                items.getString("appointed_on") + "\n";
+                    }
+
+                    if(items.has("country_of_residence")){
+                        officerInfo += "Officer country of residence: " +
+                                items.getString("country_of_residence") + "\n";
+                    }
+                    if(items.has("officer_role")){
+                        officerInfo += "Officer role: " +
+                                items.getString("officer_role") + "\n";
+                    }
+                    if(items.has("occupation")){
+                        officerInfo += "Officer occupation: " +
+                                items.getString("occupation") + "\n";
+                    }
+                    if(items.has("active_count")){
+                        officerInfo += "Officer active in: " +
+                                items.getString("active_count") + "comapnies" + "\n";
+                    }
+                    if(items.has("resigned_count")){
+                        officerInfo += "Officer resigned from: " +
+                                items.getString("resigned_count") + "comapnies" + "\n";
+                    }
+
+                    //Address is an important entry since it can be used for the google maps integration.
+                    if(items.has("address_snippet")){
+                        officerInfo += "Address: " +
+                                items.getString("address_snippet") + "\n";
+                    }else if(items.has("address")){
+                        officerInfo += "Address: " +
+                                items.getJSONObject("address").getString("premises") + ", " +
+                                items.getJSONObject("address").getString("address_line_1") + ", " +
+                                items.getJSONObject("address").getString("region") + ", " +
+                                items.getJSONObject("address").getString("locality") + ", " +
+                                items.getJSONObject("address").getString("country") + "\n";
+                    }
+
+
                 }catch(JSONException e){
                     e.printStackTrace();
                 }
-
+                infoView.setText(officerInfo);
             }else{
                 Log.d("Hello", "Items is null");
             }
         }
     }
+
 }
