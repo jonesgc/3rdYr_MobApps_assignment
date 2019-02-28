@@ -27,6 +27,7 @@ import java.util.Map;
 public class searchAndResults extends AppCompatActivity {
     private ArrayList<String> companyTitles = new ArrayList<>();
     private ArrayList<String> companyNumbers = new ArrayList<>();
+    private ArrayList<String> companyItems = new ArrayList<>();
     private Bundle bundle = new Bundle();
 
     @Override
@@ -83,7 +84,8 @@ public class searchAndResults extends AppCompatActivity {
                                         .getJSONObject(i)
                                         .getString("company_number");
                                 Log.d("Hello", companyName);
-                                addIdentification(companyName, coNumber);
+                                String coItems = res.getJSONArray("items").toString();
+                                addIdentification(companyName, coNumber, coItems);
                             }
                             initRecyclerView();
                         } catch (JSONException e) {
@@ -111,11 +113,11 @@ public class searchAndResults extends AppCompatActivity {
         requestQueueSingleton.getInstance(this).addToRequestQueue(req);
     }
 
-    public void getRelatedData(String companyName ,String companyNumber){
+    public void getRelatedData(String companyName ,String companyNumber, String cItems){
         String officers = "https://api.companieshouse.gov.uk/company/"+ companyNumber +"/officers";
         bundle.putString("Company Name", companyName);
         bundle.putString("Company Number", companyNumber);
-
+        bundle.putString("Company Items", cItems);
         //Get the officers for the input company
         StringRequest req = new StringRequest(Request.Method.GET, officers,
                 new Response.Listener<String>() {
@@ -166,18 +168,20 @@ public class searchAndResults extends AppCompatActivity {
         Log.d("Hello", "initRecyclerView");
         RecyclerView recycler =  findViewById(R.id.recycler);
         recycler.setHasFixedSize(true);
-        recyclerViewAdapter adapter = new recyclerViewAdapter(companyNumbers,companyTitles,this);
+        recyclerViewAdapter adapter = new recyclerViewAdapter(companyNumbers,companyTitles,
+                companyItems,this);
         recycler.setAdapter(adapter);
         recycler.setLayoutManager(new LinearLayoutManager(this));
 
     }
 
     //Inputs the company names intro the array so they can be displayed in the recycler view
-    private void addIdentification(String string, String coNumb)
+    private void addIdentification(String string, String coNumb, String coItems)
     {
         Log.d("Hello","Added" + string + "to titles");
         companyTitles.add(string);
         companyNumbers.add(coNumb);
+        companyItems.add(coItems);
     }
 
     //Packs the relevant data to the user input select then send it to the drawAndDisplay activity

@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
@@ -24,11 +25,14 @@ public class recyclerViewAdapter extends RecyclerView.Adapter<recyclerViewAdapte
 
     private ArrayList<String> companyTitles = new ArrayList<>();
     private ArrayList<String> companyNumbers = new ArrayList<>();
+    private ArrayList<String> comapnyItems = new ArrayList<>();
     private Context context;
 
-    public recyclerViewAdapter(ArrayList<String> companyNumbers,ArrayList<String> companyTitles, Context context) {
+    public recyclerViewAdapter(ArrayList<String> companyNumbers,ArrayList<String> companyTitles,
+                               ArrayList<String>cItems,Context context) {
         this.companyTitles = companyTitles;
         this.companyNumbers = companyNumbers;
+        this.comapnyItems = cItems;
         this.context = context;
     }
 
@@ -52,10 +56,11 @@ public class recyclerViewAdapter extends RecyclerView.Adapter<recyclerViewAdapte
 
                 String title = companyTitles.get(viewHolder.getAdapterPosition());
                 String companyNumber = companyNumbers.get(viewHolder.getAdapterPosition());
+                String cItems = comapnyItems.get(viewHolder.getAdapterPosition());
+                Log.d("Hello", "items for clicked=" + comapnyItems.get(viewHolder.getAdapterPosition()));
                 //Get the related data for the title selected, then start the intent for the node diagram.
                 if(context instanceof searchAndResults){
-                    Log.d("Hello", "onClick: Calling related data with "+ companyNumber);
-                    ((searchAndResults)context).getRelatedData(title ,companyNumber);
+                    ((searchAndResults)context).getRelatedData(title ,companyNumber, cItems);
                 }
 
             }

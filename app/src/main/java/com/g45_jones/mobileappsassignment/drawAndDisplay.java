@@ -41,6 +41,7 @@ public class drawAndDisplay extends AppCompatActivity {
     private ArrayList<JSONObject> oItems = new ArrayList<>();
     String name;
     String number;
+    String cItems;
 
 
 
@@ -74,6 +75,11 @@ public class drawAndDisplay extends AppCompatActivity {
                 Log.d("Hello", companyNo);
                 number = companyNo;
             }
+            String tempCitems = results.getString("Company Items");
+            if(tempCitems != null){
+                Log.d("Hello", "Got the company items" + tempCitems);
+                cItems = tempCitems;
+            }
             String tempItems = results.getString("items");
             if(tempItems != null){
                 Log.d("Hello", "Got the items");
@@ -89,11 +95,10 @@ public class drawAndDisplay extends AppCompatActivity {
                 }catch (JSONException e){
                     e.printStackTrace();
                 }
-
             }
         }
 
-        drawNodeView.createNodeDiagram(name, number, oName, oItems);
+        drawNodeView.createNodeDiagram(name, number, oName, oItems, cItems);
     }
 
     //Functions used for the back button.

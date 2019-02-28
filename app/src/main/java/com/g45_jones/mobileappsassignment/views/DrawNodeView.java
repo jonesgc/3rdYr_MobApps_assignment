@@ -34,6 +34,7 @@ import com.g45_jones.mobileappsassignment.circNode;
 import com.g45_jones.mobileappsassignment.drawAndDisplay;
 import com.g45_jones.mobileappsassignment.nodeInfomationDisplay;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -77,7 +78,7 @@ public class DrawNodeView extends View {
     private float oldTouchX;
     private float oldTouchY;
     private boolean pan;
-
+    private boolean scaleEnabled = false;
     private Context ctx;
 
     public DrawNodeView(Context context) {
@@ -144,9 +145,13 @@ public class DrawNodeView extends View {
             oldY.add(nodeList.get(i).getY());
         }
 
+        if(scaleEnabled){
+            canvas.scale(scaleFactor, scaleFactor, width/2, height/2);
+        }
 
-        canvas.scale(scaleFactor, scaleFactor, 500, 500);
         canvas.translate(panX, panY);
+
+
 
         if (!nodeList.isEmpty()) {
             //connect the nodes
@@ -205,7 +210,6 @@ public class DrawNodeView extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         int pointers = event.getPointerCount();
-
 
         //Log.d("Hello", "pointers = " + pointers);
         //Two fingers for scaling
@@ -278,6 +282,7 @@ public class DrawNodeView extends View {
                         oldTouchX = tX;
                         oldTouchY = tY;
                     }
+
                     touchFlag = true;
                     moved = false;
                     break;
@@ -304,7 +309,9 @@ public class DrawNodeView extends View {
             }
         }
         else if(pointers == 2){
-            scaleListener.onTouchEvent(event);
+            if(scaleEnabled){
+                scaleListener.onTouchEvent(event);
+            }
         }
 
         return true;
@@ -331,29 +338,44 @@ public class DrawNodeView extends View {
     }
 
     public void createNodeDiagram(String companyName, String companyNumber, ArrayList<String> officers,
-                                  ArrayList<JSONObject> items) {
+                                  ArrayList<JSONObject> items, String cItems) {
 
         //Nodes are created with the company title at the center.
         //Spacing is used to increase the radius of the "circle" being used to calcuate the parametric
         float spacing = 200;
         int offset = 360 / officers.size();
         int base = 0;
+        JSONObject coItems = new JSONObject();
 
         if (officers.size() >= 10 & officers.size() <= 20) {
-            spacing += 100;
+            spacing += (width/3);
         } else if (officers.size() > 20) {
-            spacing += 400;
+            spacing += (width/4);
         }
 
+        try{
+            coItems = new JSONObject(cItems);
+        }catch(JSONException e){
+            e.printStackTrace();
+        }
         //Central company node
         nodeList.add(new circNode(nodeRad, (float) width/2, (float) height/2, companyName,
-                pGreen, null));
+                pGreen, coItems));
 
 
         for (int i = 0; i < officers.size(); i++) {
             double angle = Math.toRadians(base);
-            float x = (float) (width/2) + (float) (nodeRad + spacing) * (float) Math.cos(angle);
-            float y = (float) (height/2) + (float) (nodeRad + spacing) * (float) Math.sin(angle);
+            float x;
+            float y;
+            if((i & 1) == 0){
+                 x = (float) (width/2) + (float) (nodeRad + spacing /1.8) * (float) Math.cos(angle);
+                 y = (float) (height/2) + (float) (nodeRad + spacing /1.8 ) * (float) Math.sin(angle);
+            }else{
+                 x = (float) (width/2) + (float) (nodeRad + spacing) * (float) Math.cos(angle);
+                 y = (float) (height/2) + (float) (nodeRad + spacing) * (float) Math.sin(angle);
+            }
+
+
 
             //Officers
             nodeList.add(new circNode(nodeRad, (float) x, (float) y, officers.get(i),
