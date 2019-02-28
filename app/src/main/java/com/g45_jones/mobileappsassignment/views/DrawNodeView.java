@@ -229,11 +229,14 @@ public class DrawNodeView extends View {
                                 //If there has been no movement that means it is a tap, display info
                                 if (!moved) {
                                     String title = nodeList.get(i).getTitle();
+                                    String items = nodeList.get(i).getItem().toString();
                                     Toast.makeText(getContext(), title, Toast.LENGTH_SHORT).show();
 
                                     Bundle infoBundle = new Bundle();
 
                                     infoBundle.putString("title",title);
+                                    infoBundle.putString("items", items);
+
                                     Intent nodeInformationDisplay = new Intent(ctx,nodeInfomationDisplay.class);
                                     nodeInformationDisplay.putExtras(infoBundle);
                                     nodeInformationDisplay.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
