@@ -79,6 +79,7 @@ public class DrawNodeView extends View {
     private float oldTouchX;
     private float oldTouchY;
     private boolean pan;
+    private float panCount;
     private boolean scaleEnabled = false;
     private Context ctx;
 
@@ -188,12 +189,33 @@ public class DrawNodeView extends View {
                 scroll = false;
             }
             else{
-                for (int i = 0; i < nodeList.size(); i++) {
-                    canvas.drawCircle(nodeList.get(i).getX(),
-                            nodeList.get(i).getY(),
-                            nodeList.get(i).getRadius(),
-                            nodeList.get(i).getColour());
+                if(pan){
+                    //Account for the movement of panning
+                    //Update the nodes
+                    for (int i = 0; i < nodeList.size(); i++) {
+                        float tempX= nodeList.get(i).getX();
+                        float tempY= nodeList.get(i).getY();
+                        nodeList.get(i).setX(tempX + panX);
+                        nodeList.get(i).setY(tempY + panY);
+                    }
+                    //Draw the nodes
+                    for (int i = 0; i < nodeList.size(); i++) {
+                        canvas.drawCircle(nodeList.get(i).getX(),
+                                nodeList.get(i).getY(),
+                                nodeList.get(i).getRadius(),
+                                nodeList.get(i).getColour());
+                        panX =0;
+                        panY=0;
+                    }
+                }else{
+                    for (int i = 0; i < nodeList.size(); i++) {
+                        canvas.drawCircle(nodeList.get(i).getX(),
+                                nodeList.get(i).getY(),
+                                nodeList.get(i).getRadius(),
+                                nodeList.get(i).getColour());
+                    }
                 }
+
             }
 
         }
@@ -253,11 +275,11 @@ public class DrawNodeView extends View {
                             }
                         }
 
-                        if(pan){
+                        if(pan && (panCount > 5)){
                             panX = tX - oldTouchX;
                             panY = tY - oldTouchY;
                         }
-
+                        panCount=0;
                         //Log.d("Hello", "onTouchEvent: UP");
                         touched = null;
                         threshold = 0;
@@ -301,6 +323,9 @@ public class DrawNodeView extends View {
                         //nodeList.get(touched).setColour(pRed);
                     } else {
                         Log.d("Hello", "onTouchEvent: touching nothing");
+                        Log.d("Hello", "" + nodeList.get(0).getX());
+                        Log.d("Hello", ""+ nodeList.get(0).getY());
+                        panCount+=1;
                         pan = true;
                     }
                     break;
