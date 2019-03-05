@@ -2,17 +2,21 @@ package com.g45_jones.mobileappsassignment;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.ShareActionProvider;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
+
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -42,8 +46,9 @@ public class drawAndDisplay extends AppCompatActivity {
     String name;
     String number;
     String cItems;
+    private Button share;
 
-
+    private android.support.v7.widget.ShareActionProvider shareActionProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +63,15 @@ public class drawAndDisplay extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+
+        //Button to be used with the sharing button in the action bar.
+        share = findViewById(R.id.shareButton);
+        share.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                Log.d("Hello", "Attempting to share");
+            }
+        });
 
         //Get related data
         Bundle results = getIntent().getExtras();
@@ -98,6 +112,7 @@ public class drawAndDisplay extends AppCompatActivity {
             }
         }
 
+
         drawNodeView.createNodeDiagram(name, number, oName, oItems, cItems);
     }
 
@@ -108,11 +123,31 @@ public class drawAndDisplay extends AppCompatActivity {
                 finish();
                 return true;
         }
+
         return super.onOptionsItemSelected(item);
     }
 
+
+    //Share action bar button code adapted from https://developer.android.com/training/sharing/shareaction
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate menu resource file.
+        getMenuInflater().inflate(R.menu.share_menu, menu);
+
+        // Locate MenuItem with ShareActionProvider
+        MenuItem item = menu.findItem(R.id.menu_item_share);
+
+        // Fetch and store ShareActionProvider
+        shareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
+
+        // Return true to display menu
         return true;
     }
 
+    // Call to update the share intent
+    private void setShareIntent(Intent shareIntent) {
+        if (shareActionProvider != null) {
+            shareActionProvider.setShareIntent(shareIntent);
+        }
+    }
 }

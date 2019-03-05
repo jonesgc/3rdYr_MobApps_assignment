@@ -5,9 +5,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-        <com.g45_jones.mobileappsassignment.views.DrawNodeView
-            android:id="@+id/nodeView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+    <Button
+        android:id="@+id/shareButton"
+        android:layout_width="50px"
+        android:layout_height="50px"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="12dp" />
+
+    <com.g45_jones.mobileappsassignment.views.DrawNodeView
+        android:id="@+id/nodeView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 </RelativeLayout>

@@ -12,6 +12,7 @@ import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.view.GestureDetectorCompat;
+import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -51,11 +52,13 @@ public class DrawNodeView extends View {
     Paint pGreen;
     Paint pRed;
     Paint pBlue;
+    Paint pText;
 
     //Screen
     private float width;
     private float height;
     DisplayMetrics metrics;
+    private float density;
 
     //Variables to store the x and y position of a touch event
     private float tX;
@@ -109,6 +112,7 @@ public class DrawNodeView extends View {
         ((Activity)getContext()).getWindowManager().getDefaultDisplay().getMetrics(metrics);
         width = metrics.widthPixels;
         height = metrics.heightPixels;
+        density = metrics.density;
         Log.d("Hello", "Height is =" + height + "Width is = "+ width);
 
         scaleListener = new ScaleGestureDetector(getContext(), new scaleListener());
@@ -130,6 +134,11 @@ public class DrawNodeView extends View {
         pBlue.setColor(Color.BLUE);
         pBlue.setStyle(Paint.Style.FILL_AND_STROKE);
         currentView = new Rect();
+
+        pText = new TextPaint();
+        pText.setAntiAlias(true);
+        pText.setColor(Color. BLACK);
+        pText.setTextSize(16 * density);
     }
 
     //All the nodes and lines are executed within this function
@@ -204,6 +213,10 @@ public class DrawNodeView extends View {
                                 nodeList.get(i).getY(),
                                 nodeList.get(i).getRadius(),
                                 nodeList.get(i).getColour());
+                        canvas.drawText(nodeList.get(i).getName()
+                                ,nodeList.get(i).getX()
+                                ,nodeList.get(i).getY()
+                                ,pText);
                         panX =0;
                         panY=0;
                     }
@@ -213,6 +226,10 @@ public class DrawNodeView extends View {
                                 nodeList.get(i).getY(),
                                 nodeList.get(i).getRadius(),
                                 nodeList.get(i).getColour());
+                        canvas.drawText(nodeList.get(i).getName()
+                                ,nodeList.get(i).getX()
+                                ,nodeList.get(i).getY()
+                                ,pText);
                     }
                 }
 
