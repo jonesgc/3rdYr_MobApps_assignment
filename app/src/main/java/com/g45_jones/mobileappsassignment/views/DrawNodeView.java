@@ -207,8 +207,8 @@ public class DrawNodeView extends View {
                                 nodeList.get(i).getRadius(),
                                 nodeList.get(i).getColour());
                         canvas.drawText(nodeList.get(i).getName()
-                                , nodeList.get(i).getX()
-                                , nodeList.get(i).getY()
+                                , (nodeList.get(i).getX()+nodeRad+5)
+                                , (nodeList.get(i).getY()+nodeRad+5)
                                 , pText);
                         panX = 0;
                         panY = 0;
@@ -221,8 +221,8 @@ public class DrawNodeView extends View {
                                 nodeList.get(i).getRadius(),
                                 nodeList.get(i).getColour());
                         canvas.drawText(nodeList.get(i).getName()
-                                , nodeList.get(i).getX()
-                                , nodeList.get(i).getY()
+                                , (nodeList.get(i).getX()+nodeRad+5)
+                                , (nodeList.get(i).getY()+nodeRad+5)
                                 , pText);
                     }
                 }
