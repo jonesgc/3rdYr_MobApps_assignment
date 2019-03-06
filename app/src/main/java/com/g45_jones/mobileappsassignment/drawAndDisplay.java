@@ -57,7 +57,6 @@ public class drawAndDisplay extends AppCompatActivity {
     String name;
     String number;
     String cItems;
-    private Button share;
 
     private android.support.v7.widget.ShareActionProvider shareActionProvider;
 
@@ -85,14 +84,6 @@ public class drawAndDisplay extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        //Button to be used with the sharing button in the action bar.
-        share = findViewById(R.id.shareButton);
-        share.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                Log.d("Hello", "Attempting to share");
-            }
-        });
 
         //Get related data
         Bundle results = getIntent().getExtras();

@@ -1,7 +1,9 @@
 <resources>
     <string name="app_name">MobileAppsAssignment</string>
     <string name="action_settings">Settings</string>
-    <string name="instructions">Start a new search or load a saved diagram.</string>
+    <string name="instructions">To begin, use the button to start a new search.</string>
+    <string name="description">Create node diagrams, using Companies House API!</string>
+    <string name="searchInstruction">Enter a company name.</string>
     <string name="loadSavedBtn">load</string>
     <string name="sendQueryBtn">Search</string>
     <string name="hint">Search companies</string>

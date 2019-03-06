@@ -339,10 +339,11 @@ public class DrawNodeView extends View {
                         moved = true;
                         //nodeList.get(touched).setColour(pRed);
                     } else {
-                        Log.d("Hello", "onTouchEvent: touching nothing");
-                        Log.d("Hello", "" + nodeList.get(0).getX());
-                        Log.d("Hello", ""+ nodeList.get(0).getY());
+
                         panCount+=1;
+                        if(panCount > 3){
+                            Log.d("Hello", "Count greater than 3");
+                        }
                         pan = true;
                     }
                     break;
@@ -443,9 +444,6 @@ public class DrawNodeView extends View {
 
 
     public class scaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
-
-
-
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
             scaleFactor *= detector.getScaleFactor();
