@@ -43,21 +43,20 @@ import java.util.ArrayList;
 
 public class DrawNodeView extends View {
 
-    drawAndDisplay activity = new drawAndDisplay();
     //Node variables
     private final float nodeRad = 50;
-    private float rad;
-    private ArrayList<circNode> nodeList = new ArrayList<circNode>();
+    drawAndDisplay activity = new drawAndDisplay();
     Paint pBlack;
     Paint pGreen;
     Paint pRed;
     Paint pBlue;
     Paint pText;
-
+    DisplayMetrics metrics;
+    private float rad;
+    private ArrayList<circNode> nodeList = new ArrayList<circNode>();
     //Screen
     private float width;
     private float height;
-    DisplayMetrics metrics;
     private float density;
 
     //Variables to store the x and y position of a touch event
@@ -69,8 +68,6 @@ public class DrawNodeView extends View {
     private Integer touched;
     private float threshold;
     private boolean moved;
-    private Rect currentView;
-    private RectF contentRect;
     private ScaleGestureDetector scaleListener;
     private float scaleFactor = 1.0f;
     private ArrayList<Float> oldX = new ArrayList<>();
@@ -109,11 +106,11 @@ public class DrawNodeView extends View {
         ctx = context;
 
         DisplayMetrics metrics = new DisplayMetrics();
-        ((Activity)getContext()).getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        ((Activity) getContext()).getWindowManager().getDefaultDisplay().getMetrics(metrics);
         width = metrics.widthPixels;
         height = metrics.heightPixels;
         density = metrics.density;
-        Log.d("Hello", "Height is =" + height + "Width is = "+ width);
+        Log.d("Hello", "Height is =" + height + "Width is = " + width);
 
         scaleListener = new ScaleGestureDetector(getContext(), new scaleListener());
 
@@ -133,11 +130,10 @@ public class DrawNodeView extends View {
         pBlue = new Paint(Paint.ANTI_ALIAS_FLAG);
         pBlue.setColor(Color.BLUE);
         pBlue.setStyle(Paint.Style.FILL_AND_STROKE);
-        currentView = new Rect();
 
         pText = new TextPaint();
         pText.setAntiAlias(true);
-        pText.setColor(Color. BLACK);
+        pText.setColor(Color.BLACK);
         pText.setTextSize(16 * density);
     }
 
@@ -156,12 +152,11 @@ public class DrawNodeView extends View {
             oldY.add(nodeList.get(i).getY());
         }
 
-        if(scaleEnabled){
-            canvas.scale(scaleFactor, scaleFactor, width/2, height/2);
+        if (scaleEnabled) {
+            canvas.scale(scaleFactor, scaleFactor, width / 2, height / 2);
         }
 
         canvas.translate(panX, panY);
-
 
 
         if (!nodeList.isEmpty()) {
@@ -175,18 +170,17 @@ public class DrawNodeView extends View {
             }
 
             //Draw nodes
-            if(scroll){
+            if (scroll) {
                 for (int i = 0; i < nodeList.size(); i++) {
                     //Account for scaling
-                    if(scaleFactor >= 1){
-                        float x = oldX.get(i) + (oldX.get(i) - (width/2))*(scaleFactor - 1);
-                        float y = oldY.get(i) + (oldY.get(i) - (height/2))*(scaleFactor - 1);
+                    if (scaleFactor >= 1) {
+                        float x = oldX.get(i) + (oldX.get(i) - (width / 2)) * (scaleFactor - 1);
+                        float y = oldY.get(i) + (oldY.get(i) - (height / 2)) * (scaleFactor - 1);
                         nodeList.get(i).setX(x);
                         nodeList.get(i).setY(y);
-                    }
-                    else{
-                        float x = oldX.get(i) - (oldX.get(i) - (width/2))*(1 - scaleFactor);
-                        float y = oldY.get(i) - (oldY.get(i) - (height/2))*(1 - scaleFactor);
+                    } else {
+                        float x = oldX.get(i) - (oldX.get(i) - (width / 2)) * (1 - scaleFactor);
+                        float y = oldY.get(i) - (oldY.get(i) - (height / 2)) * (1 - scaleFactor);
                         nodeList.get(i).setX(x);
                         nodeList.get(i).setY(y);
                     }
@@ -196,14 +190,13 @@ public class DrawNodeView extends View {
                             nodeList.get(i).getColour());
                 }
                 scroll = false;
-            }
-            else{
-                if(pan){
+            } else {
+                if (pan) {
                     //Account for the movement of panning
                     //Update the nodes
                     for (int i = 0; i < nodeList.size(); i++) {
-                        float tempX= nodeList.get(i).getX();
-                        float tempY= nodeList.get(i).getY();
+                        float tempX = nodeList.get(i).getX();
+                        float tempY = nodeList.get(i).getY();
                         nodeList.get(i).setX(tempX + panX);
                         nodeList.get(i).setY(tempY + panY);
                     }
@@ -214,22 +207,23 @@ public class DrawNodeView extends View {
                                 nodeList.get(i).getRadius(),
                                 nodeList.get(i).getColour());
                         canvas.drawText(nodeList.get(i).getName()
-                                ,nodeList.get(i).getX()
-                                ,nodeList.get(i).getY()
-                                ,pText);
-                        panX =0;
-                        panY=0;
+                                , nodeList.get(i).getX()
+                                , nodeList.get(i).getY()
+                                , pText);
+                        panX = 0;
+                        panY = 0;
+                        pan = false;
                     }
-                }else{
+                } else {
                     for (int i = 0; i < nodeList.size(); i++) {
                         canvas.drawCircle(nodeList.get(i).getX(),
                                 nodeList.get(i).getY(),
                                 nodeList.get(i).getRadius(),
                                 nodeList.get(i).getColour());
                         canvas.drawText(nodeList.get(i).getName()
-                                ,nodeList.get(i).getX()
-                                ,nodeList.get(i).getY()
-                                ,pText);
+                                , nodeList.get(i).getX()
+                                , nodeList.get(i).getY()
+                                , pText);
                     }
                 }
 
@@ -253,7 +247,7 @@ public class DrawNodeView extends View {
 
         //Log.d("Hello", "pointers = " + pointers);
         //Two fingers for scaling
-        if(pointers == 1){
+        if (pointers == 1) {
             switch (event.getActionMasked() & MotionEvent.ACTION_MASK) {
                 //This event follows an ACTION_DOWN and consittudes a tap.
                 case MotionEvent.ACTION_UP:
@@ -278,10 +272,10 @@ public class DrawNodeView extends View {
 
                                     Bundle infoBundle = new Bundle();
 
-                                    infoBundle.putString("title",title);
+                                    infoBundle.putString("title", title);
                                     infoBundle.putString("items", items);
 
-                                    Intent nodeInformationDisplay = new Intent(ctx,nodeInfomationDisplay.class);
+                                    Intent nodeInformationDisplay = new Intent(ctx, nodeInfomationDisplay.class);
                                     nodeInformationDisplay.putExtras(infoBundle);
                                     nodeInformationDisplay.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                     ctx.startActivity(nodeInformationDisplay);
@@ -292,11 +286,8 @@ public class DrawNodeView extends View {
                             }
                         }
 
-                        if(pan && (panCount > 5)){
-                            panX = tX - oldTouchX;
-                            panY = tY - oldTouchY;
-                        }
-                        panCount=0;
+                        oldTouchX =0;
+                        oldTouchY=0;
                         //Log.d("Hello", "onTouchEvent: UP");
                         touched = null;
                         threshold = 0;
@@ -307,7 +298,10 @@ public class DrawNodeView extends View {
                     //Look if the action was inside a node
                     tX = event.getX();
                     tY = event.getY();
-
+                    oldTouchX =0;
+                    oldTouchY=0;
+                    panX=0;
+                    panY=0;
                     //Iterate through the nodeList checking if the touch event hit any of the nodes
                     for (int i = 0; i < nodeList.size(); i++) {
                         if (checkBounds(tX, tY, nodeList.get(i).getX(), nodeList.get(i).getY())) {
@@ -317,11 +311,6 @@ public class DrawNodeView extends View {
                         }
                     }
 
-                    //Nothing was touched use pan logic.
-                    if(touched == null){
-                        oldTouchX = tX;
-                        oldTouchY = tY;
-                    }
 
                     touchFlag = true;
                     moved = false;
@@ -330,30 +319,39 @@ public class DrawNodeView extends View {
                     //since the nodelist starts at 0 we need to use an Integer to check if its null or 0
                     //Log.d("Hello", "Movement event +1 threshold");
                     threshold += 1;
+                    tX = event.getX();
+                    tY = event.getY();
                     if (touched != null && threshold >= 15) {
-                       // Log.d("Hello", "Moving " + touched);
-                        tX = event.getX();
-                        tY = event.getY();
+                        // Log.d("Hello", "Moving " + touched);
+
                         nodeList.get(touched).setX(tX);
                         nodeList.get(touched).setY(tY);
                         moved = true;
                         //nodeList.get(touched).setColour(pRed);
                     } else {
 
-                        panCount+=1;
-                        if(panCount > 3){
-                            Log.d("Hello", "Count greater than 3");
+                        if((oldTouchY == 0) && (oldTouchX==0)){
+
+                        }else{
+                            panX = tX - oldTouchX;
+                            panY = tY - oldTouchY;
+                            Log.d("Hello", "" + panX);
                         }
-                        pan = true;
+
+
+
+                        oldTouchX = tX;
+                        oldTouchY = tY;
+                        pan=true;
+                        invalidate();
                     }
                     break;
                 case MotionEvent.ACTION_CANCEL:
                     Log.d("Hello", "onTouchEvent: Canceled");
                     break;
             }
-        }
-        else if(pointers == 2){
-            if(scaleEnabled){
+        } else if (pointers == 2) {
+            if (scaleEnabled) {
                 scaleListener.onTouchEvent(event);
             }
         }
@@ -392,23 +390,23 @@ public class DrawNodeView extends View {
         JSONObject coItems = new JSONObject();
 
         if (officers.size() >= 10 & officers.size() <= 20) {
-            spacing += (width/3);
+            spacing += (width / 3);
         } else if (officers.size() > 20) {
-            spacing += (width/4);
+            spacing += (width / 4);
         }
 
-        try{
+        try {
             JSONArray temp = new JSONArray(cItems);
             coItems = new JSONObject();
 
-            for(int i =0; i < temp.length(); i++){
+            for (int i = 0; i < temp.length(); i++) {
                 coItems = temp.getJSONObject(i);
             }
-        }catch(JSONException e){
+        } catch (JSONException e) {
             e.printStackTrace();
         }
         //Central company node
-        nodeList.add(new circNode(nodeRad, (float) width/2, (float) height/2, companyName,
+        nodeList.add(new circNode(nodeRad, (float) width / 2, (float) height / 2, companyName,
                 pGreen, coItems));
         Log.d("Hello", "COMAPNY " + coItems);
 
@@ -416,20 +414,19 @@ public class DrawNodeView extends View {
             double angle = Math.toRadians(base);
             float x;
             float y;
-            if((i & 1) == 0){
-                 x = (float) (width/2) + (float) (nodeRad + spacing /1.8) * (float) Math.cos(angle);
-                 y = (float) (height/2) + (float) (nodeRad + spacing /1.8 ) * (float) Math.sin(angle);
-            }else{
-                 x = (float) (width/2) + (float) (nodeRad + spacing) * (float) Math.cos(angle);
-                 y = (float) (height/2) + (float) (nodeRad + spacing) * (float) Math.sin(angle);
+            if ((i & 1) == 0) {
+                x = (float) (width / 2) + (float) (nodeRad + spacing / 1.8) * (float) Math.cos(angle);
+                y = (float) (height / 2) + (float) (nodeRad + spacing / 1.8) * (float) Math.sin(angle);
+            } else {
+                x = (float) (width / 2) + (float) (nodeRad + spacing) * (float) Math.cos(angle);
+                y = (float) (height / 2) + (float) (nodeRad + spacing) * (float) Math.sin(angle);
             }
-
 
 
             //Officers
             nodeList.add(new circNode(nodeRad, (float) x, (float) y, officers.get(i),
                     pBlue, items.get(i)));
-            
+
             Log.d("Hello", "Base is current: " + base);
             base = base + offset;
             Log.d("Hello", "Base + offset = " + base);
