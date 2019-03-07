@@ -3,10 +3,12 @@ package com.g45_jones.mobileappsassignment;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.support.design.widget.TextInputEditText;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.system.ErrnoException;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -36,6 +38,14 @@ public class searchScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_screen);
 
+
+        //Adapted from: https://www.freakyjolly.com/how-to-add-back-arrow-in-android-activity/#more-590
+        //This code, along with onOptionSelected function were adapted from this source and used throughout this project.
+        ActionBar actionBar = getSupportActionBar();
+
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         //Create a listenter for when the searchview is submitted, so the behaviour below can be executed.
         final SearchView searchView = findViewById(R.id.search);
@@ -70,5 +80,20 @@ public class searchScreen extends AppCompatActivity {
         });
     }
 
+    //Functions used for the back button.
+    public boolean onOptionsItemSelected(MenuItem item){
+        Log.d("Hello", "onOptionsItemSelected:"+ item.getItemId());
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    public boolean onCreateOptionsMenu(){
+        return true;
+    }
 
 }

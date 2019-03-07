@@ -1,9 +1,11 @@
 package com.g45_jones.mobileappsassignment;
 
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -24,6 +26,12 @@ public class nodeInfomationDisplay extends AppCompatActivity {
         setContentView(R.layout.activity_node_info_display);
         titleView = findViewById(R.id.titleView);
         infoView = findViewById(R.id.infoView);
+
+        ActionBar actionBar = getSupportActionBar();
+
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         //Get the contents of the bundle sent from drawAndDisplay
         Bundle query = getIntent().getExtras();
@@ -132,4 +140,19 @@ public class nodeInfomationDisplay extends AppCompatActivity {
         return officerInfo;
     }
 
+    //Functions used for the back button.
+    public boolean onOptionsItemSelected(MenuItem item){
+        Log.d("Hello", "onOptionsItemSelected:"+ item.getItemId());
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    public boolean onCreateOptionsMenu(){
+        return true;
+    }
 }

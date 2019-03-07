@@ -1,11 +1,13 @@
 package com.g45_jones.mobileappsassignment;
 
 import android.content.Intent;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -35,6 +37,11 @@ public class searchAndResults extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_and_results);
 
+        ActionBar actionBar = getSupportActionBar();
+
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         //Get the contents of the bundle sent from searchScreen
         Bundle query = getIntent().getExtras();
@@ -198,5 +205,21 @@ public class searchAndResults extends AppCompatActivity {
             Log.d("Hello", "NO ACTIVE OFFICERS");
             Toast.makeText(this, "No officers for that company", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    //Functions used for the back button.
+    public boolean onOptionsItemSelected(MenuItem item){
+        Log.d("Hello", "onOptionsItemSelected:"+ item.getItemId());
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    public boolean onCreateOptionsMenu(){
+        return true;
     }
 }
