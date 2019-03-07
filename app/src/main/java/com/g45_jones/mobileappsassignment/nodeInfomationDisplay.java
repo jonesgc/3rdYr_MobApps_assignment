@@ -67,15 +67,28 @@ public class nodeInfomationDisplay extends AppCompatActivity {
 
     String getCompanyInfo(String ci){
         String info = "";
-        Log.d("Hello", "getCompanyInfo: "+ ci);
+        //Log.d("Hello", "getCompanyInfo: "+ ci);
         try{
             JSONObject i = new JSONObject(ci);
             if(i.has("company_status")){
-                info += "Company Status" + i.getJSONObject("items").getString("company_status")+"\n";
+                info += "Company Status: " + i.getString("company_status")+"\n";
+            }
+            if(i.has("company_number")){
+                info += "Company Number: " + i.getString("company_number")+"\n";
+            }
+            if(i.has("address_snippet")){
+                info+= "Company Address: " + i.getString("address_snippet")+"\n";
+            }
+            if(i.has("date_of_creation")){
+                info+= "Company created on: " + i.getString("date_of_creation")+"\n";
+            }
+            if(i.has("company_type")){
+                info+= "Company type: " + i.getString("company_type")+"\n";
             }
         }catch(JSONException e){
             e.printStackTrace();
         }
+        Log.d("Hello", "trying to put" + info);
         return info;
     }
 
